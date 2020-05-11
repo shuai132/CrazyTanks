@@ -1,4 +1,5 @@
 #include "GameScene.h"
+#include "GameOverLayer.h"
 
 #include "ui/UIButton.h"
 #include "cocos/audio/include/AudioEngine.h"
@@ -215,22 +216,9 @@ void GameScene::initLogic() {
 }
 
 void GameScene::gameOver() {
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-    auto origin = Director::getInstance()->getVisibleOrigin();
-
-    removeChild(_particleBg);
-    auto p = ParticleSnow::create();
-    addChild(p);
-
-    auto bt = ui::Button::create(_score >= 10 ? "按钮/开心.png" : "按钮/难过.png");
-    addChild(bt);
-    bt->setScale(3);
-    bt->setPosition(origin + visibleSize / 2);
     unscheduleUpdate();
-    bt->addTouchEventListener([this, bt](Ref*, ui::Widget::TouchEventType type){
-        if (type != ui::Widget::TouchEventType::BEGAN) return;
-        Director::getInstance()->replaceScene(GameScene::create());
-    });
+    stopAllActions();
+    addChild(new GameOverLayer(_score));
 }
 
 void GameScene::update(float delta) {
