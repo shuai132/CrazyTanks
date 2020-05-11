@@ -2,9 +2,7 @@
 
 #include "cocos2d.h"
 
-USING_NS_CC;
-
-class Bullet : public Node {
+class Bullet : public cocos2d::Node {
 public:
     enum class Type {
         Normal,
@@ -35,5 +33,5 @@ public:
     bool shouldDisappear();
 
 private:
-    Sprite* _实体;
+    cocos2d::Sprite* _实体;
 };

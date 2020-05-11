@@ -3,6 +3,8 @@
 
 #include "cocos/audio/include/AudioEngine.h"
 
+USING_NS_CC;
+
 Tank::Tank(Tank::Type type)
     : type(type), _mute(type == Type::AI), _move(type == Type::AI)
     {

@@ -1,5 +1,7 @@
 #include "Bullet.h"
 
+USING_NS_CC;
+
 Bullet::Bullet(Bullet::Type type) {
     autorelease();
 

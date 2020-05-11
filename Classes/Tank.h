@@ -4,9 +4,7 @@
 
 #include "Bullet.h"
 
-USING_NS_CC;
-
-class Tank : public Node {
+class Tank : public cocos2d::Node {
 public:
     enum Type {
         ME,
@@ -27,7 +25,7 @@ public:
     void update(float delta) override;
 
 public:
-    Vec2 getFirePoint();
+    cocos2d::Vec2 getFirePoint();
 
     void move(bool move);
 
@@ -44,9 +42,9 @@ public:
 private:
     Type type;
 
-    Sprite* _轮子;
-    Sprite* _车体;
-    Sprite* _炮台;
+    cocos2d::Sprite* _轮子;
+    cocos2d::Sprite* _车体;
+    cocos2d::Sprite* _炮台;
 
     Node* _发射点;
     bool _move = false;

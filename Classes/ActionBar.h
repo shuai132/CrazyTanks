@@ -2,9 +2,7 @@
 
 #include "cocos2d.h"
 
-USING_NS_CC;
-
-class ActionBar : public Node {
+class ActionBar : public cocos2d::Node {
 public:
     enum class Type {
         LEFT,
@@ -34,10 +32,10 @@ private:
     void initTouchEvent();
 
 private:
-    EventListenerTouchOneByOne* _el;
+    cocos2d::EventListenerTouchOneByOne* _el;
 
-    Sprite* _bg;    // background
-    Sprite* _tp;    // touch point
+    cocos2d::Sprite* _bg;    // background
+    cocos2d::Sprite* _tp;    // touch point
     float _angle;
     AngleCb _angleCb;
     TouchEventCb _touchEventCb;

@@ -2,6 +2,8 @@
 
 #include "ActionBar.h"
 
+USING_NS_CC;
+
 ActionBar::ActionBar(ActionBar::Type type) {
     autorelease();
 

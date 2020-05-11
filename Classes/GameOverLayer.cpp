@@ -1,6 +1,9 @@
-#include <cocos/ui/UIButton.h>
+#include "ui/UIButton.h"
+
 #include "GameOverLayer.h"
 #include "GameScene.h"
+
+USING_NS_CC;
 
 GameOverLayer::GameOverLayer(uint32_t score) {
     Layer::init();

@@ -1,6 +1,8 @@
 #include "Contact.h"
 #include "Utils.h"
 
+USING_NS_CC;
+
 Contact::Contact(float wallWidth) : _wallWidth(wallWidth + 4) {
     autorelease();
     scheduleUpdate();

@@ -5,9 +5,7 @@
 #include "Bullet.h"
 #include "Tank.h"
 
-USING_NS_CC;
-
-class Contact : public Node {
+class Contact : public cocos2d::Node {
 public:
     explicit Contact(float wallWidth);
 
