@@ -23,7 +23,7 @@
  ****************************************************************************/
 
 #include "AppDelegate.h"
-#include "HelloWorldScene.h"
+#include "GameScene.h"
 
 // #define USE_AUDIO_ENGINE 1
 
@@ -40,6 +40,7 @@ static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
 
 AppDelegate::AppDelegate()
 {
+    designResolutionSize = mediumResolutionSize;
 }
 
 AppDelegate::~AppDelegate() 
@@ -104,10 +105,20 @@ bool AppDelegate::applicationDidFinishLaunching() {
         director->setContentScaleFactor(MIN(smallResolutionSize.height/designResolutionSize.height, smallResolutionSize.width/designResolutionSize.width));
     }
 
+    // Set searching path
+    FileUtils::getInstance()->setSearchPaths({
+#ifndef NDEBUG
+        "/Users/shuai/github/CrazyTanks/Resources/tank",
+#endif
+        "tank"
+    });
+
+    director->setContentScaleFactor(2);
+
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = HelloWorld::createScene();
+    auto scene = GameScene::create();
 
     // run
     director->runWithScene(scene);
