@@ -140,6 +140,7 @@ void Contact::update(float delta) {
         tankLogic(*it);
 
         if ((*it)->isDie()) {
+            (*it)->removeFromParent();
             _tanks.erase(it);
         }
         else {

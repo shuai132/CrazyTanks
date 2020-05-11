@@ -12,7 +12,7 @@ bool GameScene::init()
         return false;
     }
 
-    WallWidth = Sprite::create("地图/1.png")->getContentSize().width;
+    wallWidth = Sprite::create("地图/1.png")->getContentSize().width;
 
     initMenu();
 
@@ -38,7 +38,7 @@ void GameScene::initMenu() {
     auto origin = Director::getInstance()->getVisibleOrigin();
 
     auto btClose = ui::Button::create("按钮/退出.png");
-    btClose->setPosition(origin + visibleSize - btClose->getContentSize()/2 - Vec2(WallWidth, WallWidth));
+    btClose->setPosition(origin + visibleSize - btClose->getContentSize()/2 - Vec2(wallWidth, wallWidth));
     btClose->setLocalZOrder(1000);
     btClose->addTouchEventListener([](Ref*, ui::Widget::TouchEventType type){
         if (type != ui::Widget::TouchEventType::ENDED) return;
@@ -68,7 +68,7 @@ void GameScene::initBg() {
 
     {
         // 上下墙体
-        auto wallTop = Sprite::create("地图/1.png", Rect(0, 0, visibleSize.width, WallWidth));
+        auto wallTop = Sprite::create("地图/1.png", Rect(0, 0, visibleSize.width, wallWidth));
         wallTop->getTexture()->setTexParameters(texParams);
         wallTop->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
         wallTop->setPosition(origin.x, origin.y + visibleSize.height);
@@ -82,7 +82,7 @@ void GameScene::initBg() {
 
     {
         // 左右墙体
-        auto wallLeft = Sprite::create("地图/1.png", Rect(0, 0, WallWidth, visibleSize.width));
+        auto wallLeft = Sprite::create("地图/1.png", Rect(0, 0, wallWidth, visibleSize.width));
         wallLeft->getTexture()->setTexParameters(texParams);
         wallLeft->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
         wallLeft->setPosition(origin);
@@ -122,7 +122,7 @@ void GameScene::initActionBar() {
     _actionBar = new ActionBar(ActionBar::Type::LEFT);
     addChild(_actionBar);
     _actionBar->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-    _actionBar->setPosition(origin + Vec2{WallWidth, WallWidth} + _actionBar->getContentSize() / 2);
+    _actionBar->setPosition(origin + Vec2{wallWidth, wallWidth} + _actionBar->getContentSize() / 2);
 
     _actionBar->setAngleCb([this](float angle) {
         _myTank->Angle = angle;
@@ -159,8 +159,8 @@ void GameScene::initCtrl() {
         auto btFire = ui::Button::create("按钮/子弹.png");
         btFire->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
         btFire->setPosition(Vec2{
-                origin.x + visibleSize.width - WallWidth,
-                origin.y + WallWidth
+                origin.x + visibleSize.width - wallWidth,
+                origin.y + wallWidth
         });
         btFire->addTouchEventListener([fire](Ref*, ui::Widget::TouchEventType type){
             if (type != ui::Widget::TouchEventType::BEGAN) return;
@@ -172,8 +172,8 @@ void GameScene::initCtrl() {
         auto btFire = ui::Button::create("按钮/导弹.png");
         btFire->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
         btFire->setPosition(Vec2{
-                origin.x + visibleSize.width - WallWidth,
-                origin.y + WallWidth + btFire->getContentSize().height + 6
+                origin.x + visibleSize.width - wallWidth,
+                origin.y + wallWidth + btFire->getContentSize().height + 6
         });
         btFire->addTouchEventListener([fire](Ref*, ui::Widget::TouchEventType type){
             if (type != ui::Widget::TouchEventType::BEGAN) return;
@@ -185,8 +185,8 @@ void GameScene::initCtrl() {
         auto btFire = ui::Button::create("按钮/导弹.png");
         btFire->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
         btFire->setPosition(Vec2{
-                origin.x + visibleSize.width - WallWidth,
-                origin.y + WallWidth + btFire->getContentSize().height * 2 + 6
+                origin.x + visibleSize.width - wallWidth,
+                origin.y + wallWidth + btFire->getContentSize().height * 2 + 6
         });
         btFire->addTouchEventListener([fire](Ref*, ui::Widget::TouchEventType type){
             if (type != ui::Widget::TouchEventType::BEGAN) return;
@@ -197,7 +197,7 @@ void GameScene::initCtrl() {
 }
 
 void GameScene::initLogic() {
-    _contact = new Contact(WallWidth);
+    _contact = new Contact(wallWidth);
     addChild(_contact);
     _contact->addTank(_myTank);
     AudioEngine::preload("音效/boom.mp3");
@@ -210,43 +210,40 @@ void GameScene::initLogic() {
         p->setSpeed(p->getSpeed() / 2);
         addChild(p);
 
-        if (_gameOver) return;
-        gameOver(false);
+        gameOver();
     });
 }
 
-void GameScene::gameOver(bool isWin) {
-    _gameOver = true;
-    if (isWin) {
-        removeChild(_particleBg);
-        auto p = ParticleSnow::create();
-        addChild(p);
-    }
-    auto bt = ui::Button::create(isWin ? "按钮/开心.png" : "按钮/难过.png");
-    bt->setScale(3);
-    bt->addTouchEventListener([this, bt](Ref*, ui::Widget::TouchEventType type){
-        if (type != ui::Widget::TouchEventType::BEGAN) return;
-        bt->removeFromParent();
-
-        Director::getInstance()->replaceScene(GameScene::create());
-    });
+void GameScene::gameOver() {
     auto visibleSize = Director::getInstance()->getVisibleSize();
     auto origin = Director::getInstance()->getVisibleOrigin();
 
-    bt->setPosition(origin + visibleSize / 2);
+    removeChild(_particleBg);
+    auto p = ParticleSnow::create();
+    addChild(p);
+
+    auto bt = ui::Button::create(_score >= 10 ? "按钮/开心.png" : "按钮/难过.png");
     addChild(bt);
+    bt->setScale(3);
+    bt->setPosition(origin + visibleSize / 2);
+    unscheduleUpdate();
+    bt->addTouchEventListener([this, bt](Ref*, ui::Widget::TouchEventType type){
+        if (type != ui::Widget::TouchEventType::BEGAN) return;
+        Director::getInstance()->replaceScene(GameScene::create());
+    });
 }
 
 void GameScene::update(float delta) {
     Node::update(delta);
 
-    if (_aiTanks.size() >= 10) return;
+    if (_aiNum >= 4) return;
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
     auto origin = Director::getInstance()->getVisibleOrigin();
 
     auto ai = new Tank(Tank::Type::AI);
     addChild(ai);
+    _aiNum++;
     ai->Angle = random(0, 359);
     ai->setScale(random(0.3f, 0.6f));
     ai->setPosition(
@@ -254,13 +251,13 @@ void GameScene::update(float delta) {
             random(origin.y, origin.y + visibleSize.height)
     );
 
-    _aiTanks.emplace_back(ai);
     _contact->addTank(ai);
     ai->setOnAiFireCb([this](Bullet* bullet) {
         _contact->addBullet(bullet);
     });
     ai->setDieCb([this, ai]{
-        ai->setVisible(false);
+        _aiNum--;
+        _score++;
         AudioEngine::play2d("音效/boom.mp3");
         auto animation = Animation::create();
         FOR(i, 3) {
@@ -277,11 +274,12 @@ void GameScene::update(float delta) {
         sp->runAction(Sequence::create(
                 action,
                 CallFunc::create([=]{
-                    ai->removeFromParent();
                     sp->removeFromParent();
                 }),
                 nullptr));
-        if (_gameOver) return;
-        gameOver(true);
     });
+}
+
+GameScene::~GameScene() {
+    unscheduleUpdate();
 }

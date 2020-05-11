@@ -9,7 +9,7 @@
 class GameScene : public cocos2d::Scene
 {
 public:
-    virtual bool init() override;
+    bool init() override;
 
     void initMenu();
 
@@ -23,23 +23,26 @@ public:
 
     void initLogic();
 
-    void gameOver(bool isWin);
+    void gameOver();
 
     CREATE_FUNC(GameScene);
 
     void update(float delta) override;
 
+    ~GameScene() override;
+
 private:
     Tank* _myTank;
-    std::vector<Tank*> _aiTanks;
 
     ActionBar* _actionBar;
 
     Contact* _contact;
 
-    bool _gameOver = false;
-
     Node* _particleBg;
 
-    float WallWidth;
+    float wallWidth;
+
+    uint32_t _aiNum = 0;
+
+    uint32_t _score = 0;
 };
