@@ -138,6 +138,8 @@ void GameScene::initTank() {
                 _labelLife->setString(std::to_string((int) life));
                 if (life <= 30) {
                     _labelLife->setColor(Color3B::RED);
+                } else {
+                    _labelLife->setColor(Color3B::WHITE);
                 }
             });
         }
