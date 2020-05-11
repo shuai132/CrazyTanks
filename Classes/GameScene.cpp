@@ -256,6 +256,7 @@ void GameScene::update(float delta) {
         auto action = Animate::create(animation);
         auto sp = Sprite::create();
         sp->setPosition(ai->getPosition());
+        sp->setScale(ai->getScale());
         addChild(sp);
         sp->runAction(Sequence::create(
                 action,
