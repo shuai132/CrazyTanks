@@ -77,22 +77,8 @@ void Tank::fire(Bullet* bullet) {
 
 void Tank::harm(Bullet* bullet) {
     _life -= bullet->Harm;
-    if (isDie()) {
-        if (type == Type::FRIEND) {
-            auto p = ParticleExplosion::create();
-            p->setPosition(this->getPosition());
-            p->setSpeed(p->getSpeed() / 2);
-            getParent()->addChild(p);
-        } else {
-            auto p = ParticleExplosion::create();
-            p->setPosition(this->getPosition());
-            p->setSpeed(p->getSpeed() / 2);
-            getParent()->addChild(p);
-        }
-
-        this->setVisible(false);
-
-        if (_dieCb) _dieCb();
+    if (_dieCb && isDie()) {
+        _dieCb();
     }
 }
 

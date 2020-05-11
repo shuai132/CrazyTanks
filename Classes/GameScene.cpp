@@ -2,6 +2,7 @@
 
 #include "ui/UIButton.h"
 #include "cocos/audio/include/AudioEngine.h"
+#include "Utils.h"
 
 USING_NS_CC;
 
@@ -210,12 +211,39 @@ void GameScene::initLogic() {
     _contact->addTank(_aiTank);
     AudioEngine::preload("音效/boom.mp3");
     _myTank->setDieCb([this]{
+        _myTank->setVisible(false);
+
         AudioEngine::play2d("音效/boom.mp3");
+        auto p = ParticleExplosion::create();
+        p->setPosition(_myTank->getPosition());
+        p->setSpeed(p->getSpeed() / 2);
+        addChild(p);
+
         if (_gameOver) return;
         gameOver(false);
     });
     _aiTank->setDieCb([this]{
+        _aiTank->setVisible(false);
         AudioEngine::play2d("音效/boom.mp3");
+        auto animation = Animation::create();
+        FOR(i, 3) {
+            char path[20];
+            sprintf(path, "坦克/爆炸/%d.png", i + 1);
+            animation->addSpriteFrameWithFile(path);
+        }
+        animation->setDelayPerUnit(1.f/3.f);
+        animation->setRestoreOriginalFrame(true);
+        auto action = Animate::create(animation);
+        auto sp = Sprite::create();
+        sp->setPosition(_aiTank->getPosition());
+        addChild(sp);
+        sp->runAction(Sequence::create(
+                action,
+                CallFunc::create([=]{
+                    _aiTank->removeFromParent();
+                    sp->removeFromParent();
+                }),
+                nullptr));
         if (_gameOver) return;
         gameOver(true);
     });
