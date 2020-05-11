@@ -11,9 +11,9 @@ public:
         AI,
     };
 
-    using DieCb = std::function<void()>;
+    using DieCb = std::function<void(Bullet* lastBullet)>;
     using FireCb = std::function<void(Bullet*)>;
-    using HarmCb = std::function<void(float life)>;
+    using LifeCb = std::function<void(float life)>;
 
 public:
     float Speed = 200;
@@ -38,11 +38,13 @@ public:
 
     bool isDie();
 
-    void setOnAiFireCb(FireCb cb);
+    void setAiFireCb(FireCb cb);
 
     float getLife();
 
-    void setHarmCb(HarmCb cb);
+    float addLife(float life);
+
+    void setLifeCb(LifeCb cb);
 
 private:
     Type type;
@@ -68,5 +70,6 @@ private:
 
     FireCb _fireCb;
 
-    HarmCb _harmCb;
+    LifeCb _lifeCb
+    ;
 };

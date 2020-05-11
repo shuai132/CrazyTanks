@@ -42,6 +42,10 @@ Tank::Tank(Tank::Type type)
 
 Tank::~Tank() {
     unscheduleUpdate();
+
+    if (_soundIdMove != NoSoundID) {
+        AudioEngine::stop(_soundIdMove);
+    }
 }
 
 Vec2 Tank::getFirePoint() {
@@ -114,10 +118,10 @@ void Tank::harm(Bullet* bullet) {
     if (_life < 0) _life = 0;
 
     if (_dieCb && isDie()) {
-        _dieCb();
+        _dieCb(bullet);
     }
 
-    if (_harmCb) _harmCb(_life);
+    if (_lifeCb) _lifeCb(_life);
 }
 
 void Tank::setDieCb(Tank::DieCb cb) {
@@ -128,7 +132,7 @@ bool Tank::isDie() {
     return _life <= 0;
 }
 
-void Tank::setOnAiFireCb(Tank::FireCb cb) {
+void Tank::setAiFireCb(Tank::FireCb cb) {
     _fireCb = std::move(cb);
 }
 
@@ -136,6 +140,12 @@ float Tank::getLife() {
     return _life;
 }
 
-void Tank::setHarmCb(Tank::HarmCb cb) {
-    _harmCb = std::move(cb);
+void Tank::setLifeCb(Tank::LifeCb cb) {
+    _lifeCb = std::move(cb);
+}
+
+float Tank::addLife(float life) {
+    _life += life;
+    if (_lifeCb) _lifeCb(_life);
+    return _life;
 }

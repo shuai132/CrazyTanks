@@ -134,8 +134,8 @@ void GameScene::initTank() {
             _labelLife->setPositionX(life->getPositionX() + life->getContentSize().width + padding);
             _labelLife->setPositionY(life->getPositionY());
             addChild(_labelLife);
-            _myTank->setHarmCb([this](float life) {
-                _labelLife->setString(std::to_string((int)life));
+            _myTank->setLifeCb([this](float life) {
+                _labelLife->setString(std::to_string((int) life));
                 if (life <= 30) {
                     _labelLife->setColor(Color3B::RED);
                 }
@@ -243,7 +243,10 @@ void GameScene::initLogic() {
     addChild(_contact);
     _contact->addTank(_myTank);
     AudioEngine::preload("音效/boom.mp3");
-    _myTank->setDieCb([this]{
+    _myTank->setDieCb([this](Bullet* lastBullet) {
+        if (lastBullet->FromTank == _myTank) {
+            log("被自己的子弹杀死了");
+        }
         _myTank->setVisible(false);
 
         AudioEngine::play2d("音效/boom.mp3");
@@ -281,13 +284,17 @@ void GameScene::update(float delta) {
     );
 
     _contact->addTank(ai);
-    ai->setOnAiFireCb([this](Bullet* bullet) {
+    ai->setAiFireCb([this](Bullet* bullet) {
         _contact->addBullet(bullet);
     });
-    ai->setDieCb([this, ai]{
+    ai->setDieCb([this, ai](Bullet* lastBullet) {
         _aiNum--;
         if (not _myTank->isDie()) {
             _score++;
+            // 终结坦克时 奖励生命
+            if (lastBullet->FromTank == _myTank) {
+                _myTank->addLife(1);
+            }
             _labelScore->setString(std::to_string(_score));
         }
 
@@ -315,5 +322,4 @@ void GameScene::update(float delta) {
 }
 
 GameScene::~GameScene() {
-    AudioEngine::stopAll();
 }

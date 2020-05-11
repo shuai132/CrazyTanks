@@ -57,7 +57,7 @@ GameOverLayer::GameOverLayer(uint32_t score) {
     }
 
     {
-        auto lbText = Label::createWithTTF("Click anywhere on the screen to restart!", "fonts/Marker Felt.ttf", 16.0f);
+        auto lbText = Label::createWithTTF("Click anywhere on the screen to restart", "fonts/Marker Felt.ttf", 16.0f);
         addChild(lbText);
         lbText->setPositionX(center.x);
         lbText->setPositionY(center.y - 200);
