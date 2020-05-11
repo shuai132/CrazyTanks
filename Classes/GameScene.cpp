@@ -104,16 +104,14 @@ void GameScene::initBg() {
 void GameScene::initTank() {
     auto visibleSize = Director::getInstance()->getVisibleSize();
     auto origin = Director::getInstance()->getVisibleOrigin();
+    auto center = origin + visibleSize / 2;
 
     _myTank = new Tank(Tank::Type::ME);
     _myTank->setScale(0.5);
 
     addChild(_myTank);
 
-    _myTank->setPosition(
-            origin.x + _myTank->getContentSize().width,
-            origin.y + visibleSize.height / 2
-            );
+    _myTank->setPosition(center);
 }
 
 void GameScene::initActionBar() {
@@ -269,5 +267,5 @@ void GameScene::update(float delta) {
 }
 
 GameScene::~GameScene() {
-    unscheduleUpdate();
+    AudioEngine::stopAll();
 }
