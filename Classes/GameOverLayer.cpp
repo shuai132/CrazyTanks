@@ -37,6 +37,10 @@ GameOverLayer::GameOverLayer(uint32_t score) {
         btFace->setScale(2);
         btFace->setPositionX(center.x);
         btFace->setPositionY(center.y + 100);
+        btFace->addTouchEventListener([](Ref*, ui::Widget::TouchEventType type){
+            if (type != ui::Widget::TouchEventType::ENDED) return;
+            Director::getInstance()->replaceScene(GameScene::create());
+        });
     }
 
     auto createTTF = [](const std::string& str) {
@@ -57,7 +61,7 @@ GameOverLayer::GameOverLayer(uint32_t score) {
     }
 
     {
-        auto lbText = Label::createWithTTF("Click anywhere on the screen to restart", "fonts/Marker Felt.ttf", 16.0f);
+        auto lbText = Label::createWithTTF("Click on the Head to restart", "fonts/Marker Felt.ttf", 16.0f);
         addChild(lbText);
         lbText->setPositionX(center.x);
         lbText->setPositionY(center.y - 200);
@@ -68,7 +72,6 @@ GameOverLayer::GameOverLayer(uint32_t score) {
         _touchListener->setSwallowTouches(true);
 
         _touchListener->onTouchBegan = [](Touch*, Event*) {
-            Director::getInstance()->replaceScene(GameScene::create());
             return true;
         };
         _eventDispatcher->addEventListenerWithSceneGraphPriority(_touchListener, this);
