@@ -13,6 +13,7 @@ public:
 
     using DieCb = std::function<void()>;
     using FireCb = std::function<void(Bullet*)>;
+    using HarmCb = std::function<void(float life)>;
 
 public:
     float Speed = 200;
@@ -39,6 +40,10 @@ public:
 
     void setOnAiFireCb(FireCb cb);
 
+    float getLife();
+
+    void setHarmCb(HarmCb cb);
+
 private:
     Type type;
 
@@ -52,7 +57,7 @@ private:
     static const auto NoSoundID = -1;
     int _soundIdMove = NoSoundID;
 
-    float _life = 10.f;
+    float _life;
     DieCb _dieCb;
 
     bool _mute;
@@ -62,4 +67,6 @@ private:
     uint64_t _lastFireTime = 0;
 
     FireCb _fireCb;
+
+    HarmCb _harmCb;
 };

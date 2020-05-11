@@ -45,4 +45,8 @@ private:
     uint32_t _aiNum = 0;
 
     uint32_t _score = 0;
+
+    cocos2d::Label* _labelLife;
+
+    cocos2d::Label* _labelScore;
 };

@@ -108,10 +108,53 @@ void GameScene::initTank() {
 
     _myTank = new Tank(Tank::Type::ME);
     _myTank->setScale(0.5);
+    _myTank->Angle = random(0, 359);
 
     addChild(_myTank);
 
     _myTank->setPosition(center);
+
+    {
+        auto createTTF = [](const std::string& str) {
+            auto lb = Label::createWithTTF(str, "fonts/Marker Felt.ttf", 28.0f);
+            lb->setColor(Color3B::WHITE);
+            lb->setLocalZOrder(1000);
+            return lb;
+        };
+
+        const auto padding = 10;
+        {
+            auto life = createTTF("Life: ");
+            addChild(life);
+            life->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+            life->setPositionX(wallWidth);
+            life->setPositionY(origin.y + visibleSize.height - wallWidth);
+            _labelLife = createTTF(std::to_string((int)_myTank->getLife()));
+            _labelLife->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+            _labelLife->setPositionX(life->getPositionX() + life->getContentSize().width + padding);
+            _labelLife->setPositionY(life->getPositionY());
+            addChild(_labelLife);
+            _myTank->setHarmCb([this](float life) {
+                _labelLife->setString(std::to_string((int)life));
+                if (life <= 30) {
+                    _labelLife->setColor(Color3B::RED);
+                }
+            });
+        }
+        {
+            auto score = createTTF("Score: ");
+            addChild(score);
+            score->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+            score->setPositionX(wallWidth);
+            score->setPositionY(origin.y + visibleSize.height - wallWidth - score->getContentSize().height);
+
+            _labelScore = createTTF("0");
+            _labelScore->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
+            _labelScore->setPositionX(score->getPositionX() + score->getContentSize().width + padding);
+            _labelScore->setPositionY(score->getPositionY());
+            addChild(_labelScore);
+        }
+    }
 }
 
 void GameScene::initActionBar() {
@@ -243,7 +286,11 @@ void GameScene::update(float delta) {
     });
     ai->setDieCb([this, ai]{
         _aiNum--;
-        _score++;
+        if (not _myTank->isDie()) {
+            _score++;
+            _labelScore->setString(std::to_string(_score));
+        }
+
         AudioEngine::play2d("音效/boom.mp3");
         auto animation = Animation::create();
         FOR(i, 3) {

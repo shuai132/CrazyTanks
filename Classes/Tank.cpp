@@ -31,6 +31,12 @@ Tank::Tank(Tank::Type type)
     this->addChild(_车体);
     this->addChild(_炮台);
 
+    if (type == Type::ME) {
+        _life = 100;
+    } else {
+        _life = 10;
+    }
+
     scheduleUpdate();
 }
 
@@ -76,7 +82,7 @@ void Tank::update(float delta) {
             Angle = random(0, 360);
         }
 
-        if (now - _lastFireTime > random(1000, 5000)) {
+        if (now - _lastFireTime > random(3000, 5000)) {
             _lastFireTime = now;
             auto bullet = new Bullet(Bullet::Type::Rock1);
             fire(bullet);
@@ -105,9 +111,13 @@ void Tank::fire(Bullet* bullet) {
 
 void Tank::harm(Bullet* bullet) {
     _life -= bullet->Harm;
+    if (_life < 0) _life = 0;
+
     if (_dieCb && isDie()) {
         _dieCb();
     }
+
+    if (_harmCb) _harmCb(_life);
 }
 
 void Tank::setDieCb(Tank::DieCb cb) {
@@ -120,4 +130,12 @@ bool Tank::isDie() {
 
 void Tank::setOnAiFireCb(Tank::FireCb cb) {
     _fireCb = std::move(cb);
+}
+
+float Tank::getLife() {
+    return _life;
+}
+
+void Tank::setHarmCb(Tank::HarmCb cb) {
+    _harmCb = std::move(cb);
 }

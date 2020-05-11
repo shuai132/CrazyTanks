@@ -32,7 +32,7 @@ GameOverLayer::GameOverLayer(uint32_t score) {
     }
 
     {
-        auto btFace = ui::Button::create(score >= 3 ? "按钮/开心.png" : "按钮/难过.png");
+        auto btFace = ui::Button::create(score >= 100 ? "按钮/开心.png" : "按钮/难过.png");
         addChild(btFace);
         btFace->setScale(2);
         btFace->setPositionX(center.x);
