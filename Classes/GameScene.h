@@ -38,4 +38,6 @@ private:
     bool _gameOver = false;
 
     Node* _particleBg;
+
+    float WallWidth;
 };

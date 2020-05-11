@@ -16,7 +16,7 @@ public:
     using DieCb = std::function<void()>;
 
 public:
-    float Speed = 1;
+    float Speed = 200;
     float Angle = 0.f;
 
 public:

@@ -5,13 +5,13 @@
 
 USING_NS_CC;
 
-const float WallWidth = 16.f;
-
 bool GameScene::init()
 {
     if ( !Scene::init() ) {
         return false;
     }
+
+    WallWidth = Sprite::create("地图/1.png")->getContentSize().width;
 
     initMenu();
 
@@ -103,6 +103,10 @@ void GameScene::initTank() {
 
     _myTank = new Tank(Tank::Type::FRIEND);
     _aiTank = new Tank(Tank::Type::ENEMY);
+
+    _myTank->setScale(0.5);
+    _aiTank->setScale(0.5);
+
     addChild(_myTank);
     addChild(_aiTank);
 
@@ -220,7 +224,7 @@ void GameScene::initLogic() {
 void GameScene::gameOver(bool isWin) {
     _gameOver = true;
     if (isWin) {
-        _particleBg->removeFromParent();
+        removeChild(_particleBg);
         auto p = ParticleSnow::create();
         addChild(p);
     }

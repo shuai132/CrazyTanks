@@ -1,6 +1,6 @@
-#include "ActionBar.h"
-
 #include <map>
+
+#include "ActionBar.h"
 
 ActionBar::ActionBar(ActionBar::Type type) {
     autorelease();
@@ -16,40 +16,46 @@ ActionBar::ActionBar(ActionBar::Type type) {
     this->addChild(_bg);
     this->addChild(_tp);
 
-    Node::setContentSize(_bg->getContentSize());
+    Node::setContentSize(_bg->getContentSize() + _tp->getContentSize() / 2);
     initTouchEvent();
 }
 
 void ActionBar::initTouchEvent() {
-    Point posOrigin = _tp->getPosition();
-    auto el = EventListenerTouchAllAtOnce::create();
-    auto angleCb = [this, posOrigin](const std::vector<Touch*>& touches, Event* event) {
-        Touch* touch;
-        for (const auto& t : touches) {
-            touch = t;
-            break;//todo
-        }
-
-        auto posNow = touch->getLocation() - this->getPosition();
-        _tp->setPosition(posNow);
-
-        auto diff = posNow - posOrigin;
-        _angle = (float)(-atan2(diff.y, diff.x) * 180 / M_PI);
+    _el = EventListenerTouchOneByOne::create();
+    auto angleCb = [this](Touch* touch, Event* event) {
+        auto pos = this->convertTouchToNodeSpaceAR(touch);
+        _angle = (float)(-atan2(pos.y, pos.x) * 180 / M_PI);
         if (_angle < 0) {
             _angle += 360.f;
         }
         if (_angleCb) _angleCb(_angle);
+
+        // 设置并限制位置
+        auto distance = pos.distance(Vec2::ZERO);
+        auto r = _bg->getContentSize().width / 2;
+        if (distance <= r) {
+            _tp->setPosition(pos);
+        }
+        else {
+            _tp->setPosition(pos / distance * r);
+        }
     };
-    el->onTouchesBegan = [this, angleCb](const std::vector<Touch*>& touches, Event* event) {
-        if (_touchEventCb) _touchEventCb(TouchEvent::START);
-        angleCb(touches, event);
+    _el->onTouchBegan = [this, angleCb](Touch* touch, Event* event) {
+        auto pos = this->convertTouchToNodeSpaceAR(touch);
+        auto size = getContentSize();
+        if (Rect(-Vec2(size / 2), size).containsPoint(pos)) {
+            if (_touchEventCb) _touchEventCb(TouchEvent::START);
+            angleCb(touch, event);
+            return true;
+        }
+        return false;
     };
-    el->onTouchesMoved = angleCb;
-    el->onTouchesEnded = [this, posOrigin](const std::vector<Touch*>& touches, Event* event) {
+    _el->onTouchMoved = angleCb;
+    _el->onTouchEnded = [this](Touch* touches, Event* event) {
         if (_touchEventCb) _touchEventCb(TouchEvent::END);
-        _tp->setPosition(posOrigin);
+        _tp->setPosition(Vec2::ZERO);
     };
-    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(el, this);
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_el, this);
 }
 
 float ActionBar::getAngle() {
@@ -62,4 +68,8 @@ void ActionBar::setAngleCb(ActionBar::AngleCb cb) {
 
 void ActionBar::setTouchEventCb(ActionBar::TouchEventCb cb) {
     _touchEventCb = std::move(cb);
+}
+
+ActionBar::~ActionBar() {
+    Director::getInstance()->getEventDispatcher()->removeEventListener(_el);
 }

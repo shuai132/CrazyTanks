@@ -7,6 +7,7 @@ Tank::Tank(Tank::Type type)
     : type(type), _mute(type == Type::ENEMY)
     {
     autorelease();
+
     _轮子 = Sprite::create("坦克/1.png");
     Node::setContentSize(_轮子->getContentSize());
     _车体 = Sprite::create("坦克/2.png");
@@ -49,13 +50,15 @@ void Tank::update(float delta) {
         return;
     }
 
-    const auto speed = 100;
     auto r = (float)(getRotation() / 180 * M_PI);
-    setPosition(getPosition() + delta * -Vec2{-speed * cos(r), speed * sin(r)});
+    setPosition(getPosition() + delta * -Vec2{-Speed * cos(r), Speed * sin(r)});
 
     if (not _mute and _soundIdMove == NoSoundID) {
         _soundIdMove = AudioEngine::play2d("音效/move.mp3", true);
     }
+
+    // 看起来更像运动的
+    _轮子->setScale(random(0.9f, 1.f));
 }
 
 void Tank::move(bool move) {

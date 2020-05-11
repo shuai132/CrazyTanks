@@ -6,14 +6,14 @@ Bullet::Bullet(Bullet::Type type) {
     _实体 = [&]{
         if (type == Bullet::Type::Normal) {
             Speed = 200;
-            MaxBounceCount = 2;
+            MaxBounceCount = 5;
 
             char buf[20];
             sprintf(buf, "子弹/0_%d.png", random(0, 3));
             return Sprite::create(buf);
         } else {
             Speed = 300;
-            MaxBounceCount = 4;
+            MaxBounceCount = 10;
 
             std::map<Bullet::Type, std::string> map = {
                     {Bullet::Type::Rock1, "子弹/1.png"},
@@ -39,5 +39,5 @@ void Bullet::update(float delta) {
 }
 
 bool Bullet::shouldDisappear() {
-    return HasBoom or (BounceCount >= MaxBounceCount);
+    return HasBoom or (BounceCount > MaxBounceCount);
 }

@@ -33,7 +33,17 @@ void Contact::update(float delta) {
         auto rotation = bullet->getRotation();
         bool bounce = false;
 
-        log("rotation: %f", rotation);
+        // 更正范围
+        for(;;) {
+            if (rotation < 0) {
+                rotation += 360;
+                continue;
+            } else if (rotation > 360) {
+                rotation -= 360;
+                continue;
+            }
+            break;
+        }
 
         // 左
         if (pos.x < origin.x + _wallWidth) {
@@ -79,7 +89,7 @@ void Contact::update(float delta) {
             bullet->BounceCount++;
         }
 
-        // 碰到任意坦克 消灭
+        // 碰到任意坦克
         for(const auto& tk : _tanks) {
             // 忽略短时间内自己发出的子弹
             if ((tk == bullet->FromTank)
@@ -115,7 +125,7 @@ void Contact::update(float delta) {
 
         // 墙内外
         auto pos = tank->getPosition();
-        auto tankSize = tank->getContentSize();
+        auto tankSize = tank->getContentSize() * tank->getScale();
         ::utils::setLimit(pos.x
                 , origin.x + tankSize.width / 2 + _wallWidth
                 , origin.x + visibleSize.width - tankSize.width / 2 - _wallWidth

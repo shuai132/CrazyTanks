@@ -22,6 +22,8 @@ public:
 public:
     explicit ActionBar(Type type);
 
+    ~ActionBar() override;
+
     float getAngle();
 
     void setAngleCb(AngleCb cb);
@@ -32,6 +34,8 @@ private:
     void initTouchEvent();
 
 private:
+    EventListenerTouchOneByOne* _el;
+
     Sprite* _bg;    // background
     Sprite* _tp;    // touch point
     float _angle;
