@@ -1,0 +1,10 @@
+# clion
+/.idea/
+/cmake-build-*/
+
+# qt
+/CMakeLists.txt.user
+
+# cocos
+/build/
+/cocos2d/
