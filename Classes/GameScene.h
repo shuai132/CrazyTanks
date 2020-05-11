@@ -27,9 +27,11 @@ public:
 
     CREATE_FUNC(GameScene);
 
+    void update(float delta) override;
+
 private:
     Tank* _myTank;
-    Tank* _aiTank;
+    std::vector<Tank*> _aiTanks;
 
     ActionBar* _actionBar;
 

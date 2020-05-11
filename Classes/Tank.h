@@ -9,18 +9,19 @@ USING_NS_CC;
 class Tank : public Node {
 public:
     enum Type {
-        FRIEND,
-        ENEMY,
+        ME,
+        AI,
     };
 
     using DieCb = std::function<void()>;
+    using FireCb = std::function<void(Bullet*)>;
 
 public:
     float Speed = 200;
     float Angle = 0.f;
 
 public:
-    explicit Tank(Type type = FRIEND);
+    explicit Tank(Type type = ME);
     ~Tank() override;
 
     void update(float delta) override;
@@ -37,6 +38,8 @@ public:
     void setDieCb(DieCb cb);
 
     bool isDie();
+
+    void setOnAiFireCb(FireCb cb);
 
 private:
     Type type;
@@ -55,4 +58,10 @@ private:
     DieCb _dieCb;
 
     bool _mute;
+
+    // AI
+    uint64_t _lastTurnTime = 0;
+    uint64_t _lastFireTime = 0;
+
+    FireCb _fireCb;
 };

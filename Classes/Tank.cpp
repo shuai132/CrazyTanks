@@ -4,7 +4,7 @@
 #include "cocos/audio/include/AudioEngine.h"
 
 Tank::Tank(Tank::Type type)
-    : type(type), _mute(type == Type::ENEMY)
+    : type(type), _mute(type == Type::AI), _move(type == Type::AI)
     {
     autorelease();
 
@@ -13,8 +13,8 @@ Tank::Tank(Tank::Type type)
     _车体 = Sprite::create("坦克/2.png");
     _炮台 = [&]{
         std::map<Tank::Type, std::string> map = {
-                {Tank::Type::FRIEND, "坦克/3.png"},
-                {Tank::Type::ENEMY, "坦克/3_1.png"},
+                {Tank::Type::ME, "坦克/3.png"},
+                {Tank::Type::AI, "坦克/3_1.png"},
         };
         return Sprite::create(map.at(type));
     }();
@@ -42,23 +42,45 @@ Vec2 Tank::getFirePoint() {
 
 void Tank::update(float delta) {
     Node::update(delta);
+
+    if (_move && not _mute) {
+        if (_soundIdMove == NoSoundID) {
+            _soundIdMove = AudioEngine::play2d("音效/move.mp3", true);
+        } else {
+            AudioEngine::resume(_soundIdMove);
+        }
+    } else {
+        AudioEngine::pause(_soundIdMove);
+    }
+
+    // 更新角度
     setRotation(Angle);
-    if (isDie() || not _move) {
-        if (_mute) return;
-        AudioEngine::stop(_soundIdMove);
-        _soundIdMove = NoSoundID;
-        return;
+    // 运动
+    if (_move) {
+        // 看起来更像运动的
+        _轮子->setScale(random(0.9f, 1.f));
+
+        auto r = (float)(getRotation() / 180 * M_PI);
+        setPosition(getPosition() + delta * -Vec2{-Speed * cos(r), Speed * sin(r)});
     }
 
-    auto r = (float)(getRotation() / 180 * M_PI);
-    setPosition(getPosition() + delta * -Vec2{-Speed * cos(r), Speed * sin(r)});
+    /// AI
+    if (type == Type::AI) {
+        _move = true;
 
-    if (not _mute and _soundIdMove == NoSoundID) {
-        _soundIdMove = AudioEngine::play2d("音效/move.mp3", true);
+        auto now = ::utils::nowMs();
+        if (now - _lastTurnTime > random(2000, 3000)) {
+            _lastTurnTime = now;
+            Angle = random(0, 360);
+        }
+
+        if (now - _lastFireTime > random(1000, 5000)) {
+            _lastFireTime = now;
+            auto bullet = new Bullet(Bullet::Type::Rock1);
+            fire(bullet);
+            if (_fireCb) _fireCb(bullet);
+        }
     }
-
-    // 看起来更像运动的
-    _轮子->setScale(random(0.9f, 1.f));
 }
 
 void Tank::move(bool move) {
@@ -72,7 +94,11 @@ void Tank::fire(Bullet* bullet) {
     getParent()->addChild(bullet);
     bullet->setPosition(getParent()->convertToNodeSpace(convertToWorldSpace(getFirePoint())));
 
-    AudioEngine::play2d("音效/fire.mp3");
+    bullet->setScale(getScale());
+
+    if (type != Type::AI) {
+        AudioEngine::play2d("音效/fire.mp3");
+    }
 }
 
 void Tank::harm(Bullet* bullet) {
@@ -88,4 +114,8 @@ void Tank::setDieCb(Tank::DieCb cb) {
 
 bool Tank::isDie() {
     return _life <= 0;
+}
+
+void Tank::setOnAiFireCb(Tank::FireCb cb) {
+    _fireCb = std::move(cb);
 }

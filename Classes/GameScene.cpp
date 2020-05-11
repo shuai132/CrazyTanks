@@ -28,6 +28,8 @@ bool GameScene::init()
 
     AudioEngine::play2d("音效/start.mp3");
 
+    scheduleUpdate();
+
     return true;
 }
 
@@ -102,25 +104,15 @@ void GameScene::initTank() {
     auto visibleSize = Director::getInstance()->getVisibleSize();
     auto origin = Director::getInstance()->getVisibleOrigin();
 
-    _myTank = new Tank(Tank::Type::FRIEND);
-    _aiTank = new Tank(Tank::Type::ENEMY);
-
+    _myTank = new Tank(Tank::Type::ME);
     _myTank->setScale(0.5);
-    _aiTank->setScale(0.5);
 
     addChild(_myTank);
-    addChild(_aiTank);
 
     _myTank->setPosition(
             origin.x + _myTank->getContentSize().width,
             origin.y + visibleSize.height / 2
             );
-
-    _aiTank->setPosition(
-            origin.x + visibleSize.width - _aiTank->getContentSize().width,
-            origin.y + visibleSize.height / 2
-            );
-    _aiTank->Angle = 180;
 }
 
 void GameScene::initActionBar() {
@@ -208,7 +200,6 @@ void GameScene::initLogic() {
     _contact = new Contact(WallWidth);
     addChild(_contact);
     _contact->addTank(_myTank);
-    _contact->addTank(_aiTank);
     AudioEngine::preload("音效/boom.mp3");
     _myTank->setDieCb([this]{
         _myTank->setVisible(false);
@@ -221,31 +212,6 @@ void GameScene::initLogic() {
 
         if (_gameOver) return;
         gameOver(false);
-    });
-    _aiTank->setDieCb([this]{
-        _aiTank->setVisible(false);
-        AudioEngine::play2d("音效/boom.mp3");
-        auto animation = Animation::create();
-        FOR(i, 3) {
-            char path[20];
-            sprintf(path, "坦克/爆炸/%d.png", i + 1);
-            animation->addSpriteFrameWithFile(path);
-        }
-        animation->setDelayPerUnit(1.f/3.f);
-        animation->setRestoreOriginalFrame(true);
-        auto action = Animate::create(animation);
-        auto sp = Sprite::create();
-        sp->setPosition(_aiTank->getPosition());
-        addChild(sp);
-        sp->runAction(Sequence::create(
-                action,
-                CallFunc::create([=]{
-                    _aiTank->removeFromParent();
-                    sp->removeFromParent();
-                }),
-                nullptr));
-        if (_gameOver) return;
-        gameOver(true);
     });
 }
 
@@ -269,4 +235,53 @@ void GameScene::gameOver(bool isWin) {
 
     bt->setPosition(origin + visibleSize / 2);
     addChild(bt);
+}
+
+void GameScene::update(float delta) {
+    Node::update(delta);
+
+    if (_aiTanks.size() >= 10) return;
+
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    auto origin = Director::getInstance()->getVisibleOrigin();
+
+    auto ai = new Tank(Tank::Type::AI);
+    addChild(ai);
+    ai->Angle = random(0, 359);
+    ai->setScale(random(0.3f, 0.6f));
+    ai->setPosition(
+            random(origin.x, origin.x + visibleSize.width),
+            random(origin.y, origin.y + visibleSize.height)
+    );
+
+    _aiTanks.emplace_back(ai);
+    _contact->addTank(ai);
+    ai->setOnAiFireCb([this](Bullet* bullet) {
+        _contact->addBullet(bullet);
+    });
+    ai->setDieCb([this, ai]{
+        ai->setVisible(false);
+        AudioEngine::play2d("音效/boom.mp3");
+        auto animation = Animation::create();
+        FOR(i, 3) {
+            char path[20];
+            sprintf(path, "坦克/爆炸/%d.png", i + 1);
+            animation->addSpriteFrameWithFile(path);
+        }
+        animation->setDelayPerUnit(1.f/3.f);
+        animation->setRestoreOriginalFrame(true);
+        auto action = Animate::create(animation);
+        auto sp = Sprite::create();
+        sp->setPosition(ai->getPosition());
+        addChild(sp);
+        sp->runAction(Sequence::create(
+                action,
+                CallFunc::create([=]{
+                    ai->removeFromParent();
+                    sp->removeFromParent();
+                }),
+                nullptr));
+        if (_gameOver) return;
+        gameOver(true);
+    });
 }
