@@ -3,7 +3,7 @@
 #include "Food.h"
 
 #include "ui/UIButton.h"
-#include "cocos/audio/include/AudioEngine.h"
+#include "AudioEngine.h"
 #include "Utils.h"
 
 USING_NS_CC;

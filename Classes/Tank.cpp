@@ -1,7 +1,7 @@
 #include "Tank.h"
 #include "Utils.h"
 
-#include "cocos/audio/include/AudioEngine.h"
+#include "AudioEngine.h"
 
 USING_NS_CC;
 
