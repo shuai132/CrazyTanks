@@ -4,7 +4,7 @@
 
 class GameOverLayer : public cocos2d::LayerColor {
 public:
-    explicit GameOverLayer(uint32_t score);
+    explicit GameOverLayer(uint32_t score, uint32_t goodScore);
 
     ~GameOverLayer() override;
 

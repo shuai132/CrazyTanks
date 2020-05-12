@@ -31,12 +31,6 @@ Tank::Tank(Tank::Type type)
     this->addChild(_车体);
     this->addChild(_炮台);
 
-    if (type == Type::ME) {
-        _life = 100;
-    } else {
-        _life = 10;
-    }
-
     scheduleUpdate();
 }
 

@@ -61,7 +61,7 @@ private:
     static const auto NoSoundID = -1;
     int _soundIdMove = NoSoundID;
 
-    float _life;
+    float _life = 10;
     DieCb _dieCb;
 
     bool _mute;

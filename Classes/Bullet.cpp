@@ -8,7 +8,7 @@ Bullet::Bullet(Bullet::Type type) {
     _实体 = [&] {
         if (type == Bullet::Type::Rock2) {
             Speed = 300;
-            Harm = 20;
+            Harm = 50;
             MaxBounceCount = 2;
             return Sprite::create("子弹/1.png");
         } else if (type == Bullet::Type::Rock1) {
@@ -18,7 +18,7 @@ Bullet::Bullet(Bullet::Type type) {
             return Sprite::create("子弹/2.png");
         } else {
             Speed = 260;
-            Harm = 1;
+            Harm = 10;
             MaxBounceCount = 0;
 
             auto res = StringUtils::format("子弹/0_%d.png", random(0, 3));

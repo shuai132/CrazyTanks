@@ -5,7 +5,7 @@
 
 USING_NS_CC;
 
-GameOverLayer::GameOverLayer(uint32_t score) {
+GameOverLayer::GameOverLayer(uint32_t score, uint32_t goodScore) {
     Layer::init();
     autorelease();
 
@@ -33,7 +33,7 @@ GameOverLayer::GameOverLayer(uint32_t score) {
     }
 
     {
-        auto btFace = ui::Button::create(score >= 100 ? "按钮/开心.png" : "按钮/难过.png");
+        auto btFace = ui::Button::create(score >= goodScore ? "按钮/开心.png" : "按钮/难过.png");
         addChild(btFace);
         btFace->setScale(2);
         btFace->setPositionX(center.x);

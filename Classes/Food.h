@@ -8,7 +8,7 @@ public:
     CREATE_FUNC(Food);
 
 public:
-    float Energy = 10;
+    float Energy = 1;
 
 public:
     void setEatCb(EatCb cb);

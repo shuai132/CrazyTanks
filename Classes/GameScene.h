@@ -31,7 +31,7 @@ public:
 
     void updateAI(float delta);
 
-    void updateHeart(float delta);
+    void updateFood(float delta);
 
     ~GameScene() override;
 

@@ -130,14 +130,16 @@ void GameScene::initTank() {
             _labelLife->setPositionX(life->getPositionX() + life->getContentSize().width + padding);
             _labelLife->setPositionY(life->getPositionY());
             addChild(_labelLife);
-            _myTank->setLifeCb([this](float life) {
+            auto lifeCb([this](float life) {
                 _labelLife->setString(std::to_string((int) life));
-                if (life <= 30) {
+                if (life <= 50) {
                     _labelLife->setColor(Color3B::RED);
                 } else {
                     _labelLife->setColor(Color3B::WHITE);
                 }
             });
+            lifeCb(_myTank->getLife());
+            _myTank->setLifeCb(lifeCb);
         }
         {
             auto score = createTTF("Score: ");
@@ -264,13 +266,13 @@ void GameScene::initLogic() {
 void GameScene::gameOver() {
     unscheduleUpdate();
     stopAllActions();
-    addChild(new GameOverLayer(_score));
+    addChild(new GameOverLayer(_score, 10));
 }
 
 void GameScene::update(float delta) {
     Node::update(delta);
     updateAI(delta);
-    updateHeart(delta);
+    updateFood(delta);
 }
 
 void GameScene::updateAI(float delta) {
@@ -323,7 +325,7 @@ void GameScene::updateAI(float delta) {
     });
 }
 
-void GameScene::updateHeart(float delta) {
+void GameScene::updateFood(float delta) {
     if (_foodNum >= MAX_FOOD_NUM) return;
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
