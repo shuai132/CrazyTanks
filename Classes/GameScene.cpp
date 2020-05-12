@@ -324,7 +324,7 @@ void GameScene::updateAI(float delta) {
 }
 
 void GameScene::updateHeart(float delta) {
-    if (_foodNum >= 3) return;
+    if (_foodNum >= MAX_FOOD_NUM) return;
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
     auto origin = Director::getInstance()->getVisibleOrigin();

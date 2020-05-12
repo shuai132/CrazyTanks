@@ -53,4 +53,5 @@ private:
     cocos2d::Label* _labelScore;
 
     uint32_t _foodNum = 0;
+    const decltype(_foodNum) MAX_FOOD_NUM = 1;
 };
