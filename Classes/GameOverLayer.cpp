@@ -28,6 +28,7 @@ GameOverLayer::GameOverLayer(uint32_t score) {
 
     {
         auto snow = ParticleSnow::create();
+        snow->setPositionY(origin.y + visibleSize.height);
         addChild(snow);
     }
 

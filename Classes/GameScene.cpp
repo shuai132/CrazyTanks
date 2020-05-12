@@ -95,11 +95,6 @@ void GameScene::initBg() {
         wallRight->setPosition(origin + visibleSize);
         addChild(wallRight);
     }
-
-    {
-        _particleBg = ParticleRain::create();
-        addChild(_particleBg);
-    }
 }
 
 void GameScene::initTank() {

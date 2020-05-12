@@ -42,8 +42,6 @@ private:
 
     Contact* _contact;
 
-    Node* _particleBg;
-
     float wallWidth;
 
     uint32_t _aiNum = 0;
