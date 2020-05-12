@@ -89,6 +89,9 @@ void Tank::update(float delta) {
         if (now - _lastFireTime > random(3000, 5000)) {
             _lastFireTime = now;
             auto bullet = new Bullet(Bullet::Type::Rock1);
+            bullet->setBoomCb([bullet]{
+                bullet->removeFromParent();
+            });
             fire(bullet);
             if (_fireCb) _fireCb(bullet);
         }

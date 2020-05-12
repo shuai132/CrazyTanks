@@ -29,6 +29,8 @@ Bullet::Bullet(Bullet::Type type) {
 
     this->addChild(_实体);
     scheduleUpdate();
+
+    _hasBoom = false;
 }
 
 Bullet::~Bullet() {
@@ -40,8 +42,22 @@ void Bullet::update(float delta) {
 
     auto r = (float)(getRotation() / 180 * M_PI);
     setPosition(getPosition() + delta * -Vec2{-Speed * cos(r), Speed * sin(r)});
+
+    if (BounceCount > MaxBounceCount) {
+        boom();
+    }
 }
 
-bool Bullet::shouldDisappear() {
-    return HasBoom or (BounceCount > MaxBounceCount);
+bool Bullet::hasBoom() {
+    return _hasBoom;
+}
+
+void Bullet::setBoomCb(Bullet::BoomCb cb) {
+    _boomCb = std::move(cb);
+}
+
+void Bullet::boom() {
+    if (_hasBoom) return;
+    _hasBoom = true;
+    if (_boomCb) _boomCb();
 }

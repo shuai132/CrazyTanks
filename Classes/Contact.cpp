@@ -13,16 +13,30 @@ Contact::~Contact() {
 }
 
 void Contact::addBullet(Bullet* bullet) {
-    _bullets.emplace_back(bullet);
+    _bullets.pushBack(bullet);
 }
 
 void Contact::addTank(Tank* tank) {
-    _tanks.emplace_back(tank);
+    _tanks.pushBack(tank);
+}
+
+void Contact::setUserTank(Tank* tank) {
+    _userTank = tank;
+    tank->retain();
+}
+
+void Contact::addFood(Food* food) {
+    _foods.pushBack(food);
 }
 
 void Contact::update(float delta) {
     Node::update(delta);
+    updateBullet(delta);
+    updateTank(delta);
+    updateFood(delta);
+}
 
+void Contact::updateBullet(float delta) {
     auto bulletLogic = [&](Bullet* bullet) {
         auto visibleSize = Director::getInstance()->getVisibleSize();
         auto origin = Director::getInstance()->getVisibleOrigin();
@@ -100,27 +114,31 @@ void Contact::update(float delta) {
                 continue;
             }
 
-            auto maxDistance = tk->getContentSize().width + bullet->getContentSize().width;
+            auto maxDistance = tk->getContentSize().width * tk->getScale()
+                    + bullet->getContentSize().width * bullet->getScale();
             maxDistance /= 2;
             auto distance = tk->getPosition().getDistance(bullet->getPosition());
             if (distance < maxDistance) {
-                bullet->HasBoom = true;
                 tk->harm(bullet);
+                bullet->boom();
             }
         }
     };
-    for (auto it = _bullets.cbegin(); it != _bullets.cend();) {
-        bulletLogic(*it);
 
-        if ((*it)->shouldDisappear()) {
-            (*it)->removeFromParent();
+    for (auto it = _bullets.begin(); it != _bullets.end();) {
+        auto bullet = *it;
+        bulletLogic(bullet);
+
+        if (bullet->hasBoom()) {
             _bullets.erase(it);
         }
         else {
             it++;
         }
     }
+}
 
+void Contact::updateTank(float delta) {
     auto tankLogic = [&](Tank* tank) {
         auto visibleSize = Director::getInstance()->getVisibleSize();
         auto origin = Director::getInstance()->getVisibleOrigin();
@@ -131,19 +149,50 @@ void Contact::update(float delta) {
         ::utils::setLimit(pos.x
                 , origin.x + tankSize.width / 2 + _wallWidth
                 , origin.x + visibleSize.width - tankSize.width / 2 - _wallWidth
-                );
+        );
         ::utils::setLimit(pos.y
                 , origin.y + tankSize.height / 2 + _wallWidth
                 , origin.y + visibleSize.height - tankSize.width / 2 - _wallWidth
-                );
+        );
         tank->setPosition(pos);
     };
-    for (auto it = _tanks.cbegin(); it != _tanks.cend();) {
-        tankLogic(*it);
-
-        if ((*it)->isDie()) {
-            (*it)->removeFromParent();
+    for (auto it = _tanks.begin(); it != _tanks.end();) {
+        auto tk = *it;
+        tankLogic(tk);
+        if (tk->isDie()) {
             _tanks.erase(it);
+        }
+        else {
+            it++;
+        }
+    }
+}
+
+void Contact::updateFood(float delta) {
+    auto logic = [&](Food* food) {
+        auto visibleSize = Director::getInstance()->getVisibleSize();
+        auto origin = Director::getInstance()->getVisibleOrigin();
+
+        // 墙内外
+        auto pos = food->getPosition();
+        auto size = food->getContentSize();
+
+        // 碰到玩家坦克
+        const auto& tk = _userTank;
+        auto maxDistance = tk->getContentSize().width + food->getContentSize().width;
+        maxDistance /= 3;
+        auto distance = tk->getPosition().getDistance(food->getPosition());
+        bool isBound = distance < maxDistance;
+        if (isBound) {
+            tk->addLife(food->Energy);
+            food->eatBy(tk);
+        }
+    };
+    for (auto it = _foods.begin(); it != _foods.end();) {
+        auto food = *it;
+        logic(food);
+        if (food->hasEat()) {
+            _foods.erase(it);
         }
         else {
             it++;

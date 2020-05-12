@@ -1,5 +1,6 @@
 #include "GameScene.h"
 #include "GameOverLayer.h"
+#include "Food.h"
 
 #include "ui/UIButton.h"
 #include "cocos/audio/include/AudioEngine.h"
@@ -30,6 +31,8 @@ bool GameScene::init()
     AudioEngine::play2d("音效/start.mp3");
 
     scheduleUpdate();
+
+    _foodNum = 0;   // todo: why?
 
     return true;
 }
@@ -196,6 +199,9 @@ void GameScene::initCtrl() {
         if (_myTank->isDie()) return;
         auto bullet = new Bullet(type);
         _myTank->fire(bullet);
+        bullet->setBoomCb([bullet]{
+            bullet->removeFromParent();
+        });
         _contact->addBullet(bullet);
     };
 
@@ -244,12 +250,12 @@ void GameScene::initLogic() {
     _contact = new Contact(wallWidth);
     addChild(_contact);
     _contact->addTank(_myTank);
+    _contact->setUserTank(_myTank);
     AudioEngine::preload("音效/boom.mp3");
     _myTank->setDieCb([this](Bullet* lastBullet) {
         if (lastBullet->FromTank == _myTank) {
             log("被自己的子弹杀死了");
         }
-        _myTank->setVisible(false);
 
         AudioEngine::play2d("音效/boom.mp3");
         auto p = ParticleExplosion::create();
@@ -269,7 +275,11 @@ void GameScene::gameOver() {
 
 void GameScene::update(float delta) {
     Node::update(delta);
+    updateAI(delta);
+    updateHeart(delta);
+}
 
+void GameScene::updateAI(float delta) {
     if (_aiNum >= 4) return;
 
     auto visibleSize = Director::getInstance()->getVisibleSize();
@@ -290,13 +300,10 @@ void GameScene::update(float delta) {
         _contact->addBullet(bullet);
     });
     ai->setDieCb([this, ai](Bullet* lastBullet) {
+        ai->removeFromParent();
         _aiNum--;
-        if (not _myTank->isDie()) {
+        if (lastBullet->FromTank == _myTank && not _myTank->isDie()) {
             _score++;
-            // 终结坦克时 奖励生命
-            if (lastBullet->FromTank == _myTank) {
-                _myTank->addLife(1);
-            }
             _labelScore->setString(std::to_string(_score));
         }
 
@@ -321,6 +328,26 @@ void GameScene::update(float delta) {
                 }),
                 nullptr));
     });
+}
+
+void GameScene::updateHeart(float delta) {
+    if (_foodNum >= 3) return;
+
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    auto origin = Director::getInstance()->getVisibleOrigin();
+    auto center = origin + visibleSize / 2;
+
+    auto food = Food::create();
+    food->initWithFile("道具/heart.png");
+    food->setPositionX(center.x + random(-visibleSize.width / 2 + wallWidth, visibleSize.width / 2 - wallWidth));
+    food->setPositionY(center.y + random(-visibleSize.height / 2 + wallWidth, visibleSize.height / 2 - wallWidth));
+    addChild(food);
+    food->setEatCb([this, food](void* by) {
+        food->removeFromParent();
+        _foodNum--;
+    });
+    _foodNum++;
+    _contact->addFood(food);
 }
 
 GameScene::~GameScene() {

@@ -29,6 +29,10 @@ public:
 
     void update(float delta) override;
 
+    void updateAI(float delta);
+
+    void updateHeart(float delta);
+
     ~GameScene() override;
 
 private:
@@ -49,4 +53,6 @@ private:
     cocos2d::Label* _labelLife;
 
     cocos2d::Label* _labelScore;
+
+    uint32_t _foodNum = 0;
 };

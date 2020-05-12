@@ -10,14 +10,14 @@ public:
         Rock2,
     };
 
+    using BoomCb = std::function<void()>;
+
     float Speed = 200;
 
     uint32_t MaxBounceCount = 0;
     uint32_t BounceCount = 0;
 
     float Harm = 10;
-
-    bool HasBoom = false;
 
     void* FromTank;
     uint64_t FromTime;
@@ -30,8 +30,16 @@ public:
 public:
     void update(float delta) override;
 
-    bool shouldDisappear();
+    bool hasBoom();
+
+    void setBoomCb(BoomCb cb);
+
+    void boom();
 
 private:
     cocos2d::Sprite* _实体;
+
+    BoomCb _boomCb;
+
+    bool _hasBoom = false;
 };

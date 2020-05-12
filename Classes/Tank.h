@@ -70,6 +70,5 @@ private:
 
     FireCb _fireCb;
 
-    LifeCb _lifeCb
-    ;
+    LifeCb _lifeCb;
 };
