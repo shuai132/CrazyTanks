@@ -46,6 +46,8 @@ public:
 
     void setLifeCb(LifeCb cb);
 
+    void mute();
+
 private:
     Type type;
 
