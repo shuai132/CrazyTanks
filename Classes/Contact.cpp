@@ -10,6 +10,7 @@ Contact::Contact(float wallWidth) : _wallWidth(wallWidth + 4) {
 
 Contact::~Contact() {
     unscheduleUpdate();
+    _userTank->release();
 }
 
 void Contact::addBullet(Bullet* bullet) {

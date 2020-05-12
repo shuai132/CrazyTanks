@@ -32,8 +32,6 @@ bool GameScene::init()
 
     scheduleUpdate();
 
-    _foodNum = 0;   // todo: why?
-
     return true;
 }
 
@@ -253,6 +251,7 @@ void GameScene::initLogic() {
     _contact->setUserTank(_myTank);
     AudioEngine::preload("音效/boom.mp3");
     _myTank->setDieCb([this](Bullet* lastBullet) {
+        _myTank->removeFromParent();
         if (lastBullet->FromTank == _myTank) {
             log("被自己的子弹杀死了");
         }
@@ -310,9 +309,8 @@ void GameScene::updateAI(float delta) {
         AudioEngine::play2d("音效/boom.mp3");
         auto animation = Animation::create();
         FOR(i, 3) {
-            char path[20];
-            sprintf(path, "坦克/爆炸/%d.png", i + 1);
-            animation->addSpriteFrameWithFile(path);
+            auto res = StringUtils::format("坦克/爆炸/%d.png", i + 1);
+            animation->addSpriteFrameWithFile(res);
         }
         animation->setDelayPerUnit(1.f/3.f);
         animation->setRestoreOriginalFrame(true);

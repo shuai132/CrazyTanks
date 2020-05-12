@@ -21,9 +21,8 @@ Bullet::Bullet(Bullet::Type type) {
             Harm = 1;
             MaxBounceCount = 0;
 
-            char buf[20];
-            sprintf(buf, "子弹/0_%d.png", random(0, 3));
-            return Sprite::create(buf);
+            auto res = StringUtils::format("子弹/0_%d.png", random(0, 3));
+            return Sprite::create(res);
         }
     }();
 
