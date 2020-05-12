@@ -34,7 +34,7 @@ private:
 
     cocos2d::Vector<Tank*> _tanks;
 
-    Tank* _userTank;
+    Tank* _userTank = nullptr;
 
     cocos2d::Vector<Food*> _foods;
 

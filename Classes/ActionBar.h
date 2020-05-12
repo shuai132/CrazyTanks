@@ -4,11 +4,6 @@
 
 class ActionBar : public cocos2d::Node {
 public:
-    enum class Type {
-        LEFT,
-        RIGHT,
-    };
-
     enum class TouchEvent {
         START,
         END,
@@ -18,9 +13,11 @@ public:
     using TouchEventCb = std::function<void(TouchEvent)>;
 
 public:
-    explicit ActionBar(Type type);
+    CREATE_FUNC(ActionBar);
 
     ~ActionBar() override;
+
+    bool init() override;
 
     float getAngle();
 

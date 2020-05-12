@@ -28,7 +28,7 @@ bool GameScene::init()
 
     initLogic();
 
-    AudioEngine::play2d("音效/start.mp3");
+    _bgmStart = AudioEngine::play2d("音效/start.mp3");
 
     scheduleUpdate();
 
@@ -104,7 +104,7 @@ void GameScene::initTank() {
 
     _myTank = new Tank(Tank::Type::ME);
     _myTank->setScale(0.5);
-    _myTank->Angle = random(0, 359);
+    _myTank->Angle = -90;
 
     addChild(_myTank);
 
@@ -161,7 +161,7 @@ void GameScene::initActionBar() {
     auto visibleSize = Director::getInstance()->getVisibleSize();
     auto origin = Director::getInstance()->getVisibleOrigin();
 
-    _actionBar = new ActionBar(ActionBar::Type::LEFT);
+    _actionBar = ActionBar::create();
     addChild(_actionBar);
     _actionBar->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     _actionBar->setPosition(origin + Vec2{wallWidth, wallWidth} + _actionBar->getContentSize() / 2);
@@ -346,4 +346,5 @@ void GameScene::updateFood(float delta) {
 }
 
 GameScene::~GameScene() {
+    AudioEngine::stop(_bgmStart);
 }

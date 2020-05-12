@@ -1,25 +1,16 @@
-#include <map>
-
 #include "ActionBar.h"
 
 USING_NS_CC;
 
-ActionBar::ActionBar(ActionBar::Type type) {
-    autorelease();
-
+bool ActionBar::init() {
     _bg = Sprite::create("轮盘/背景.png");
-    _tp = [&]{
-        std::map<ActionBar::Type, std::string> map = {
-                {ActionBar::Type::LEFT, "轮盘/方向.png"},
-                {ActionBar::Type::RIGHT, "轮盘/瞄准.png"},
-        };
-        return Sprite::create(map.at(type));
-    }();
+    _tp = Sprite::create("轮盘/方向.png");
     this->addChild(_bg);
     this->addChild(_tp);
 
     Node::setContentSize(_bg->getContentSize() + _tp->getContentSize() / 2);
     initTouchEvent();
+    return true;
 }
 
 void ActionBar::initTouchEvent() {

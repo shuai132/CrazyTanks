@@ -148,6 +148,7 @@ float Tank::addLife(float life) {
 }
 
 void Tank::mute() {
+    _mute = true;
     if (_soundIdMove != NoSoundID) {
         AudioEngine::stop(_soundIdMove);
     }

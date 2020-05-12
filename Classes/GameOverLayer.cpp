@@ -6,7 +6,7 @@
 USING_NS_CC;
 
 GameOverLayer::GameOverLayer(uint32_t score, uint32_t goodScore) {
-    Layer::init();
+    LayerColor::init();
     autorelease();
 
     _bestScore = UserDefault::getInstance()->getIntegerForKey(K_BEST_SCORE);

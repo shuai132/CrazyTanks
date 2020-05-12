@@ -36,6 +36,8 @@ public:
     ~GameScene() override;
 
 private:
+    int _bgmStart = cocos2d::AudioEngine::INVALID_AUDIO_ID;
+
     Tank* _myTank;
 
     ActionBar* _actionBar;

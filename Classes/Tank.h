@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cocos2d.h"
+#include "AudioEngine.h"
 
 #include "Bullet.h"
 
@@ -58,7 +59,7 @@ private:
     Node* _发射点;
     bool _move = false;
 
-    static const auto NoSoundID = -1;
+    const int& NoSoundID = cocos2d::AudioEngine::INVALID_AUDIO_ID;
     int _soundIdMove = NoSoundID;
 
     float _life = 10;

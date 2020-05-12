@@ -19,8 +19,8 @@ public:
 
     float Harm = 10;
 
-    void* FromTank;
-    uint64_t FromTime;
+    void* FromTank = nullptr;
+    uint64_t FromTime = 0;
 
 public:
     explicit Bullet(Type type = Type::Normal);

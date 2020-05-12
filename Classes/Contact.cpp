@@ -180,8 +180,9 @@ void Contact::updateFood(float delta) {
 
         // 碰到玩家坦克
         const auto& tk = _userTank;
-        auto maxDistance = tk->getContentSize().width + food->getContentSize().width;
-        maxDistance /= 3;
+        auto maxDistance = tk->getContentSize().width * tk->getScale()
+                + food->getContentSize().width * food->getScale();
+        maxDistance /= 2;
         auto distance = tk->getPosition().getDistance(food->getPosition());
         bool isBound = distance < maxDistance;
         if (isBound) {
