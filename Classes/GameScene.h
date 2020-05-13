@@ -40,6 +40,8 @@ private:
 
     Tank* _myTank;
 
+    cocos2d::FiniteTimeAction* _actionBoom;
+
     ActionBar* _actionBar;
 
     Contact* _contact;

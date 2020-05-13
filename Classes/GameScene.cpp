@@ -146,6 +146,18 @@ void GameScene::initTank() {
             addChild(_labelScore);
         }
     }
+
+    {
+        auto animation = Animation::create();
+        FOR(i, 3) {
+            auto res = StringUtils::format("坦克/爆炸/%d.png", i + 1);
+            animation->addSpriteFrameWithFile(res);
+        }
+        animation->setDelayPerUnit(1.f/3.f);
+        animation->setRestoreOriginalFrame(true);
+        _actionBoom = Animate::create(animation);
+        _actionBoom->retain();
+    }
 }
 
 void GameScene::initActionBar() {
@@ -286,20 +298,12 @@ void GameScene::updateAI(float delta) {
         }
 
         AudioEngine::play2d("音效/boom.mp3");
-        auto animation = Animation::create();
-        FOR(i, 3) {
-            auto res = StringUtils::format("坦克/爆炸/%d.png", i + 1);
-            animation->addSpriteFrameWithFile(res);
-        }
-        animation->setDelayPerUnit(1.f/3.f);
-        animation->setRestoreOriginalFrame(true);
-        auto action = Animate::create(animation);
         auto sp = Sprite::create();
         sp->setPosition(ai->getPosition());
         sp->setScale(ai->getScale());
         addChild(sp);
         sp->runAction(Sequence::create(
-                action,
+                _actionBoom->clone(),
                 CallFunc::create([=]{
                     sp->removeFromParent();
                 }),
@@ -325,4 +329,5 @@ void GameScene::updateFood(float delta) {
 
 GameScene::~GameScene() {
     AudioEngine::stop(_bgmStart);
+    _actionBoom->release();
 }
