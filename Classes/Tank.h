@@ -52,11 +52,11 @@ public:
 private:
     Type type;
 
-    cocos2d::Sprite* _轮子;
-    cocos2d::Sprite* _车体;
-    cocos2d::Sprite* _炮台;
+    cocos2d::Sprite* _wheel;
+    cocos2d::Sprite* _body;
+    cocos2d::Sprite* _gun;
 
-    Node* _发射点;
+    Node* _firePoint;
     bool _move = false;
 
     const int& NoSoundID = cocos2d::AudioEngine::INVALID_AUDIO_ID;

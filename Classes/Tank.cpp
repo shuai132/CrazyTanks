@@ -10,10 +10,10 @@ Tank::Tank(Tank::Type type)
     {
     autorelease();
 
-    _轮子 = Sprite::create("坦克/1.png");
-    Node::setContentSize(_轮子->getContentSize());
-    _车体 = Sprite::create("坦克/2.png");
-    _炮台 = [&]{
+    _wheel = Sprite::create("坦克/1.png");
+    Node::setContentSize(_wheel->getContentSize());
+        _body = Sprite::create("坦克/2.png");
+        _gun = [&]{
         std::map<Tank::Type, std::string> map = {
                 {Tank::Type::ME, "坦克/3.png"},
                 {Tank::Type::AI, "坦克/3_1.png"},
@@ -22,14 +22,14 @@ Tank::Tank(Tank::Type type)
     }();
 
     {
-        _发射点 = Node::create();
-        _发射点->setPosition(_炮台->getContentSize().width / 2, 0);
-        _炮台->addChild(_发射点);
+        _firePoint = Node::create();
+        _firePoint->setPosition(_gun->getContentSize().width / 2, 0);
+        _gun->addChild(_firePoint);
     }
-    _炮台->setAnchorPoint({0.325, 0.5});
-    this->addChild(_轮子);
-    this->addChild(_车体);
-    this->addChild(_炮台);
+    _gun->setAnchorPoint({0.325, 0.5});
+    this->addChild(_wheel);
+    this->addChild(_body);
+    this->addChild(_gun);
 
     scheduleUpdate();
 }
@@ -40,7 +40,7 @@ Tank::~Tank() {
 }
 
 Vec2 Tank::getFirePoint() {
-    return _发射点->getPosition();
+    return _firePoint->getPosition();
 }
 
 void Tank::update(float delta) {
@@ -61,7 +61,7 @@ void Tank::update(float delta) {
     // 运动
     if (_move) {
         // 看起来更像运动的
-        _轮子->setScale(random(0.9f, 1.f));
+        _wheel->setScale(random(0.9f, 1.f));
 
         auto r = (float)(getRotation() / 180 * M_PI);
         setPosition(getPosition() + delta * -Vec2{-Speed * cos(r), Speed * sin(r)});

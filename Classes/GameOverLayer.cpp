@@ -5,7 +5,7 @@
 #include "Utils.h"
 
 USING_NS_CC;
-using namespace visible_size;
+using namespace utils_cc;
 
 GameOverLayer::GameOverLayer(uint32_t score, uint32_t goodScore) {
     LayerColor::init();

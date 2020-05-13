@@ -1,9 +1,10 @@
-#include "Utils.h"
+#include "UtilsCC.h"
 
 #include "cocos2d.h"
+
 USING_NS_CC;
 
-namespace visible_size {
+namespace utils_cc {
 
 Director* director;
 

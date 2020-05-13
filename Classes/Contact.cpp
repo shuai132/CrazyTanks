@@ -1,8 +1,9 @@
 #include "Contact.h"
 #include "Utils.h"
+#include "UtilsCC.h"
 
 USING_NS_CC;
-using namespace visible_size;
+using namespace utils_cc;
 
 Contact::Contact(float wallWidth) : _wallWidth(wallWidth + 4) {
     autorelease();

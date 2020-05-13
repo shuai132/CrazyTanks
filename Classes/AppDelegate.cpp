@@ -118,7 +118,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     register_all_packages();
 
-    visible_size::init();
+    utils_cc::init();
 
     // create a scene. it's an autorelease object
     auto scene = GameScene::create();

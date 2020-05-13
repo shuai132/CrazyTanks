@@ -7,7 +7,7 @@
 #include "Utils.h"
 
 USING_NS_CC;
-using namespace visible_size;
+using namespace utils_cc;
 
 bool GameScene::init()
 {
@@ -15,7 +15,7 @@ bool GameScene::init()
         return false;
     }
 
-    wallWidth = Sprite::create("地图/1.png")->getContentSize().width;
+    _wallWidth = Sprite::create("地图/1.png")->getContentSize().width;
 
     initMenu();
 
@@ -38,7 +38,7 @@ bool GameScene::init()
 
 void GameScene::initMenu() {
     auto btClose = ui::Button::create("按钮/退出.png");
-    btClose->setPosition(tright - btClose->getContentSize()/2 - Vec2(wallWidth, wallWidth));
+    btClose->setPosition(tright - btClose->getContentSize()/2 - Vec2(_wallWidth, _wallWidth));
     btClose->setLocalZOrder(1000);
     btClose->addTouchEventListener([](Ref*, ui::Widget::TouchEventType type){
         if (type != ui::Widget::TouchEventType::ENDED) return;
@@ -65,7 +65,7 @@ void GameScene::initBg() {
 
     {
         // 上下墙体
-        auto wallTop = Sprite::create("地图/1.png", {0, 0, visibleSize.width, wallWidth});
+        auto wallTop = Sprite::create("地图/1.png", {0, 0, visibleSize.width, _wallWidth});
         wallTop->getTexture()->setTexParameters(texParams);
         wallTop->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
         wallTop->setPosition(tleft);
@@ -79,7 +79,7 @@ void GameScene::initBg() {
 
     {
         // 左右墙体
-        auto wallLeft = Sprite::create("地图/1.png", {0, 0, wallWidth, visibleSize.width});
+        auto wallLeft = Sprite::create("地图/1.png", {0, 0, _wallWidth, visibleSize.width});
         wallLeft->getTexture()->setTexParameters(texParams);
         wallLeft->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
         wallLeft->setPosition(bleft);
@@ -114,8 +114,8 @@ void GameScene::initTank() {
             auto life = createTTF("Life: ");
             addChild(life);
             life->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-            life->setPositionX(tleft.x + wallWidth);
-            life->setPositionY(tleft.y - wallWidth);
+            life->setPositionX(tleft.x + _wallWidth);
+            life->setPositionY(tleft.y - _wallWidth);
             _labelLife = createTTF(std::to_string((int)_myTank->getLife()));
             _labelLife->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
             _labelLife->setPositionX(life->getPositionX() + life->getContentSize().width + padding);
@@ -136,8 +136,8 @@ void GameScene::initTank() {
             auto score = createTTF("Score: ");
             addChild(score);
             score->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-            score->setPositionX(tleft.x + wallWidth);
-            score->setPositionY(tleft.y - wallWidth - score->getContentSize().height);
+            score->setPositionX(tleft.x + _wallWidth);
+            score->setPositionY(tleft.y - _wallWidth - score->getContentSize().height);
 
             _labelScore = createTTF("0");
             _labelScore->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
@@ -156,7 +156,7 @@ void GameScene::initTank() {
         animation->setDelayPerUnit(1.f/3.f);
         animation->setRestoreOriginalFrame(true);
         _actionBoom = Animate::create(animation);
-        _actionBoom->retain();
+        _refKeeper.pushBack(_actionBoom);
     }
 }
 
@@ -164,7 +164,7 @@ void GameScene::initActionBar() {
     _actionBar = ActionBar::create();
     addChild(_actionBar);
     _actionBar->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-    _actionBar->setPosition(bleft + Vec2{wallWidth, wallWidth} + _actionBar->getContentSize() / 2);
+    _actionBar->setPosition(bleft + Vec2{_wallWidth, _wallWidth} + _actionBar->getContentSize() / 2);
 
     _actionBar->setAngleCb([this](float angle) {
         _myTank->Angle = angle;
@@ -201,8 +201,8 @@ void GameScene::initCtrl() {
         auto btFire = ui::Button::create("按钮/子弹.png");
         btFire->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
         btFire->setPosition(Vec2{
-            right - wallWidth,
-            bottom + wallWidth
+                right - _wallWidth,
+                bottom + _wallWidth
         });
         btFire->addTouchEventListener([fire](Ref*, ui::Widget::TouchEventType type){
             if (type != ui::Widget::TouchEventType::BEGAN) return;
@@ -214,8 +214,8 @@ void GameScene::initCtrl() {
         auto btFire = ui::Button::create("按钮/导弹.png");
         btFire->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
         btFire->setPosition(Vec2{
-                right - wallWidth,
-                bottom + wallWidth + btFire->getContentSize().height + 6
+                right - _wallWidth,
+                bottom + _wallWidth + btFire->getContentSize().height + 6
         });
         btFire->addTouchEventListener([fire](Ref*, ui::Widget::TouchEventType type){
             if (type != ui::Widget::TouchEventType::BEGAN) return;
@@ -227,8 +227,8 @@ void GameScene::initCtrl() {
         auto btFire = ui::Button::create("按钮/导弹.png");
         btFire->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
         btFire->setPosition(Vec2{
-                right - wallWidth,
-                bottom + wallWidth + btFire->getContentSize().height * 2 + 6
+                right - _wallWidth,
+                bottom + _wallWidth + btFire->getContentSize().height * 2 + 6
         });
         btFire->addTouchEventListener([fire](Ref*, ui::Widget::TouchEventType type){
             if (type != ui::Widget::TouchEventType::BEGAN) return;
@@ -239,7 +239,7 @@ void GameScene::initCtrl() {
 }
 
 void GameScene::initLogic() {
-    _contact = new Contact(wallWidth);
+    _contact = new Contact(_wallWidth);
     addChild(_contact);
     _contact->addTank(_myTank);
     _contact->setUserTank(_myTank);
@@ -316,8 +316,8 @@ void GameScene::updateFood(float delta) {
 
     auto food = Food::create();
     food->initWithFile("道具/heart.png");
-    food->setPositionX(random(left + wallWidth, right - wallWidth));
-    food->setPositionY(random(top + wallWidth, bottom - wallWidth));
+    food->setPositionX(random(left + _wallWidth, right - _wallWidth));
+    food->setPositionY(random(top + _wallWidth, bottom - _wallWidth));
     addChild(food);
     food->setEatCb([this, food](void* by) {
         food->removeFromParent();
@@ -329,5 +329,4 @@ void GameScene::updateFood(float delta) {
 
 GameScene::~GameScene() {
     AudioEngine::stop(_bgmStart);
-    _actionBoom->release();
 }

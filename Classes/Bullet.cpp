@@ -5,7 +5,7 @@ USING_NS_CC;
 Bullet::Bullet(Bullet::Type type) {
     autorelease();
 
-    _实体 = [&] {
+    _body = [&] {
         if (type == Bullet::Type::Rock2) {
             Speed = 300;
             Harm = 50;
@@ -26,7 +26,7 @@ Bullet::Bullet(Bullet::Type type) {
         }
     }();
 
-    this->addChild(_实体);
+    this->addChild(_body);
     scheduleUpdate();
 
     _hasBoom = false;

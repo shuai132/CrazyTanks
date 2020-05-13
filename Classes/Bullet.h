@@ -37,7 +37,7 @@ public:
     void boom();
 
 private:
-    cocos2d::Sprite* _实体;
+    cocos2d::Sprite* _body;
 
     BoomCb _boomCb;
 

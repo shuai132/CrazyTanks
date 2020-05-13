@@ -5,6 +5,7 @@
 #include "Tank.h"
 #include "ActionBar.h"
 #include "Contact.h"
+#include "UtilsCC.h"
 
 class GameScene : public cocos2d::Scene
 {
@@ -41,12 +42,13 @@ private:
     Tank* _myTank;
 
     cocos2d::FiniteTimeAction* _actionBoom;
+    utils_cc::RefKeeper _refKeeper;
 
     ActionBar* _actionBar;
 
     Contact* _contact;
 
-    float wallWidth;
+    float _wallWidth;
 
     uint32_t _aiNum = 0;
 
