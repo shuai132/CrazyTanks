@@ -2,8 +2,10 @@
 
 #include "GameOverLayer.h"
 #include "GameScene.h"
+#include "Utils.h"
 
 USING_NS_CC;
+using namespace visible_size;
 
 GameOverLayer::GameOverLayer(uint32_t score, uint32_t goodScore) {
     LayerColor::init();
@@ -22,13 +24,9 @@ GameOverLayer::GameOverLayer(uint32_t score, uint32_t goodScore) {
         addChild(grayLayer);
     }
 
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-    auto origin = Director::getInstance()->getVisibleOrigin();
-    auto center = origin + visibleSize / 2;
-
     {
         auto snow = ParticleSnow::create();
-        snow->setPositionY(origin.y + visibleSize.height);
+        snow->setPosition(ctop);
         addChild(snow);
     }
 

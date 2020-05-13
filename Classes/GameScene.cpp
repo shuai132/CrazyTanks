@@ -7,6 +7,7 @@
 #include "Utils.h"
 
 USING_NS_CC;
+using namespace visible_size;
 
 bool GameScene::init()
 {
@@ -36,11 +37,8 @@ bool GameScene::init()
 }
 
 void GameScene::initMenu() {
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-    auto origin = Director::getInstance()->getVisibleOrigin();
-
     auto btClose = ui::Button::create("按钮/退出.png");
-    btClose->setPosition(origin + visibleSize - btClose->getContentSize()/2 - Vec2(wallWidth, wallWidth));
+    btClose->setPosition(tright - btClose->getContentSize()/2 - Vec2(wallWidth, wallWidth));
     btClose->setLocalZOrder(1000);
     btClose->addTouchEventListener([](Ref*, ui::Widget::TouchEventType type){
         if (type != ui::Widget::TouchEventType::ENDED) return;
@@ -50,9 +48,6 @@ void GameScene::initMenu() {
 }
 
 void GameScene::initBg() {
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-    auto origin = Director::getInstance()->getVisibleOrigin();
-
     auto texParams = Texture2D::TexParams{
             backend::SamplerFilter::LINEAR,
             backend::SamplerFilter::LINEAR,
@@ -62,46 +57,42 @@ void GameScene::initBg() {
 
     {
         // 背景
-        auto bg = Sprite::create("地图/3.png", Rect(0, 0, visibleSize.width, visibleSize.height));
+        auto bg = Sprite::create("地图/3.png", {Vec2::ZERO, visibleSize});
         bg->getTexture()->setTexParameters(texParams);
-        bg->setPosition(origin + visibleSize / 2);
+        bg->setPosition(center);
         addChild(bg);
     }
 
     {
         // 上下墙体
-        auto wallTop = Sprite::create("地图/1.png", Rect(0, 0, visibleSize.width, wallWidth));
+        auto wallTop = Sprite::create("地图/1.png", {0, 0, visibleSize.width, wallWidth});
         wallTop->getTexture()->setTexParameters(texParams);
         wallTop->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-        wallTop->setPosition(origin.x, origin.y + visibleSize.height);
+        wallTop->setPosition(tleft);
         addChild(wallTop);
 
         auto wallBottom = Sprite::createWithSpriteFrame(wallTop->getSpriteFrame());
         wallBottom->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-        wallBottom->setPosition(origin);
+        wallBottom->setPosition(bleft);
         addChild(wallBottom);
     }
 
     {
         // 左右墙体
-        auto wallLeft = Sprite::create("地图/1.png", Rect(0, 0, wallWidth, visibleSize.width));
+        auto wallLeft = Sprite::create("地图/1.png", {0, 0, wallWidth, visibleSize.width});
         wallLeft->getTexture()->setTexParameters(texParams);
         wallLeft->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-        wallLeft->setPosition(origin);
+        wallLeft->setPosition(bleft);
         addChild(wallLeft);
 
         auto wallRight = Sprite::createWithSpriteFrame(wallLeft->getSpriteFrame());
         wallRight->setAnchorPoint(Vec2::ANCHOR_TOP_RIGHT);
-        wallRight->setPosition(origin + visibleSize);
+        wallRight->setPosition(tright);
         addChild(wallRight);
     }
 }
 
 void GameScene::initTank() {
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-    auto origin = Director::getInstance()->getVisibleOrigin();
-    auto center = origin + visibleSize / 2;
-
     _myTank = new Tank(Tank::Type::ME);
     _myTank->setScale(0.5);
     _myTank->Angle = -90;
@@ -123,8 +114,8 @@ void GameScene::initTank() {
             auto life = createTTF("Life: ");
             addChild(life);
             life->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-            life->setPositionX(wallWidth);
-            life->setPositionY(origin.y + visibleSize.height - wallWidth);
+            life->setPositionX(tleft.x + wallWidth);
+            life->setPositionY(tleft.y - wallWidth);
             _labelLife = createTTF(std::to_string((int)_myTank->getLife()));
             _labelLife->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
             _labelLife->setPositionX(life->getPositionX() + life->getContentSize().width + padding);
@@ -145,8 +136,8 @@ void GameScene::initTank() {
             auto score = createTTF("Score: ");
             addChild(score);
             score->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
-            score->setPositionX(wallWidth);
-            score->setPositionY(origin.y + visibleSize.height - wallWidth - score->getContentSize().height);
+            score->setPositionX(tleft.x + wallWidth);
+            score->setPositionY(tleft.y - wallWidth - score->getContentSize().height);
 
             _labelScore = createTTF("0");
             _labelScore->setAnchorPoint(Vec2::ANCHOR_TOP_LEFT);
@@ -158,13 +149,10 @@ void GameScene::initTank() {
 }
 
 void GameScene::initActionBar() {
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-    auto origin = Director::getInstance()->getVisibleOrigin();
-
     _actionBar = ActionBar::create();
     addChild(_actionBar);
     _actionBar->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
-    _actionBar->setPosition(origin + Vec2{wallWidth, wallWidth} + _actionBar->getContentSize() / 2);
+    _actionBar->setPosition(bleft + Vec2{wallWidth, wallWidth} + _actionBar->getContentSize() / 2);
 
     _actionBar->setAngleCb([this](float angle) {
         _myTank->Angle = angle;
@@ -187,9 +175,6 @@ void GameScene::initActionBar() {
 }
 
 void GameScene::initCtrl() {
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-    auto origin = Director::getInstance()->getVisibleOrigin();
-
     auto fire = [this](Bullet::Type type) {
         if (_myTank->isDie()) return;
         auto bullet = new Bullet(type);
@@ -204,8 +189,8 @@ void GameScene::initCtrl() {
         auto btFire = ui::Button::create("按钮/子弹.png");
         btFire->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
         btFire->setPosition(Vec2{
-                origin.x + visibleSize.width - wallWidth,
-                origin.y + wallWidth
+            right - wallWidth,
+            bottom + wallWidth
         });
         btFire->addTouchEventListener([fire](Ref*, ui::Widget::TouchEventType type){
             if (type != ui::Widget::TouchEventType::BEGAN) return;
@@ -217,8 +202,8 @@ void GameScene::initCtrl() {
         auto btFire = ui::Button::create("按钮/导弹.png");
         btFire->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
         btFire->setPosition(Vec2{
-                origin.x + visibleSize.width - wallWidth,
-                origin.y + wallWidth + btFire->getContentSize().height + 6
+                right - wallWidth,
+                bottom + wallWidth + btFire->getContentSize().height + 6
         });
         btFire->addTouchEventListener([fire](Ref*, ui::Widget::TouchEventType type){
             if (type != ui::Widget::TouchEventType::BEGAN) return;
@@ -230,8 +215,8 @@ void GameScene::initCtrl() {
         auto btFire = ui::Button::create("按钮/导弹.png");
         btFire->setAnchorPoint(Vec2::ANCHOR_BOTTOM_RIGHT);
         btFire->setPosition(Vec2{
-                origin.x + visibleSize.width - wallWidth,
-                origin.y + wallWidth + btFire->getContentSize().height * 2 + 6
+                right - wallWidth,
+                bottom + wallWidth + btFire->getContentSize().height * 2 + 6
         });
         btFire->addTouchEventListener([fire](Ref*, ui::Widget::TouchEventType type){
             if (type != ui::Widget::TouchEventType::BEGAN) return;
@@ -278,17 +263,14 @@ void GameScene::update(float delta) {
 void GameScene::updateAI(float delta) {
     if (_aiNum >= 4) return;
 
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-    auto origin = Director::getInstance()->getVisibleOrigin();
-
     auto ai = new Tank(Tank::Type::AI);
     addChild(ai);
     _aiNum++;
     ai->Angle = random(0, 359);
     ai->setScale(random(0.3f, 0.6f));
     ai->setPosition(
-            random(origin.x, origin.x + visibleSize.width),
-            random(origin.y, origin.y + visibleSize.height)
+            random(left, right),
+            random(bottom, top)
     );
 
     _contact->addTank(ai);
@@ -328,14 +310,10 @@ void GameScene::updateAI(float delta) {
 void GameScene::updateFood(float delta) {
     if (_foodNum >= MAX_FOOD_NUM) return;
 
-    auto visibleSize = Director::getInstance()->getVisibleSize();
-    auto origin = Director::getInstance()->getVisibleOrigin();
-    auto center = origin + visibleSize / 2;
-
     auto food = Food::create();
     food->initWithFile("道具/heart.png");
-    food->setPositionX(center.x + random(-visibleSize.width / 2 + wallWidth, visibleSize.width / 2 - wallWidth));
-    food->setPositionY(center.y + random(-visibleSize.height / 2 + wallWidth, visibleSize.height / 2 - wallWidth));
+    food->setPositionX(random(left + wallWidth, right - wallWidth));
+    food->setPositionY(random(top + wallWidth, bottom - wallWidth));
     addChild(food);
     food->setEatCb([this, food](void* by) {
         food->removeFromParent();

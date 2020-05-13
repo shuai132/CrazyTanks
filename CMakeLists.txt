@@ -54,6 +54,8 @@ if(APPLE OR WINDOWS)
     cocos_mark_multi_resources(common_res_files RES_TO "Resources" FOLDERS ${GAME_RES_FOLDER})
 endif()
 
+add_compile_options(-Wall)
+
 # add cross-platforms source files and header files
 list(APPEND GAME_HEADER
         Classes/AppDelegate.h

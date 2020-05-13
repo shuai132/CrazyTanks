@@ -6,7 +6,7 @@
 USING_NS_CC;
 
 Tank::Tank(Tank::Type type)
-    : type(type), _mute(type == Type::AI), _move(type == Type::AI)
+    : type(type), _move(type == Type::AI), _mute(type == Type::AI)
     {
     autorelease();
 

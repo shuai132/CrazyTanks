@@ -2,6 +2,7 @@
 #include "Utils.h"
 
 USING_NS_CC;
+using namespace visible_size;
 
 Contact::Contact(float wallWidth) : _wallWidth(wallWidth + 4) {
     autorelease();
@@ -39,9 +40,6 @@ void Contact::update(float delta) {
 
 void Contact::updateBullet(float delta) {
     auto bulletLogic = [&](Bullet* bullet) {
-        auto visibleSize = Director::getInstance()->getVisibleSize();
-        auto origin = Director::getInstance()->getVisibleOrigin();
-
         // 墙内外
         auto pos = bullet->getPosition();
         auto size = bullet->getContentSize();
@@ -63,7 +61,7 @@ void Contact::updateBullet(float delta) {
         }
 
         // 左
-        if (pos.x < origin.x + _wallWidth) {
+        if (pos.x < left + _wallWidth) {
             bounce = true;
             if (90 <= rotation and rotation <= 180) {
                 rotation = 90 - (rotation - 90);
@@ -72,7 +70,7 @@ void Contact::updateBullet(float delta) {
             }
         }
         // 右
-        else if (pos.x > origin.x + visibleSize.width - _wallWidth) {
+        else if (pos.x > right - _wallWidth) {
             bounce = true;
             if (0 <= rotation and rotation <= 90) {
                 rotation = 90 + (90 - rotation);
@@ -82,7 +80,7 @@ void Contact::updateBullet(float delta) {
             }
         }
         // 下
-        else if (pos.y < origin.y + _wallWidth) {
+        else if (pos.y < bottom + _wallWidth) {
             bounce = true;
             if (90 <= rotation and rotation <= 180) {
                 rotation = 180 + (180 - rotation);
@@ -92,7 +90,7 @@ void Contact::updateBullet(float delta) {
             }
         }
         // 上
-        else if (pos.y > origin.y + visibleSize.height - _wallWidth) {
+        else if (pos.y > top - _wallWidth) {
             bounce = true;
             if (180 <= rotation and rotation <= 270) {
                 rotation = 180 - (rotation - 180);
@@ -141,19 +139,16 @@ void Contact::updateBullet(float delta) {
 
 void Contact::updateTank(float delta) {
     auto tankLogic = [&](Tank* tank) {
-        auto visibleSize = Director::getInstance()->getVisibleSize();
-        auto origin = Director::getInstance()->getVisibleOrigin();
-
         // 墙内外
         auto pos = tank->getPosition();
         auto tankSize = tank->getContentSize() * tank->getScale();
         ::utils::setLimit(pos.x
-                , origin.x + tankSize.width / 2 + _wallWidth
-                , origin.x + visibleSize.width - tankSize.width / 2 - _wallWidth
+                , left + tankSize.width / 2 + _wallWidth
+                , right - tankSize.width / 2 - _wallWidth
         );
         ::utils::setLimit(pos.y
-                , origin.y + tankSize.height / 2 + _wallWidth
-                , origin.y + visibleSize.height - tankSize.width / 2 - _wallWidth
+                , bottom + tankSize.height / 2 + _wallWidth
+                , top - tankSize.width / 2 - _wallWidth
         );
         tank->setPosition(pos);
     };
@@ -171,11 +166,7 @@ void Contact::updateTank(float delta) {
 
 void Contact::updateFood(float delta) {
     auto logic = [&](Food* food) {
-        auto visibleSize = Director::getInstance()->getVisibleSize();
-        auto origin = Director::getInstance()->getVisibleOrigin();
-
         // 墙内外
-        auto pos = food->getPosition();
         auto size = food->getContentSize();
 
         // 碰到玩家坦克

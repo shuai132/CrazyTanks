@@ -24,6 +24,7 @@
 
 #include "AppDelegate.h"
 #include "GameScene.h"
+#include "Utils.h"
 
 #define USE_AUDIO_ENGINE 1
 
@@ -116,6 +117,8 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setContentScaleFactor(2);
 
     register_all_packages();
+
+    visible_size::init();
 
     // create a scene. it's an autorelease object
     auto scene = GameScene::create();
