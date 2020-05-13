@@ -12,14 +12,17 @@ Tank::Tank(Tank::Type type)
 
     _wheel = Sprite::create("坦克/1.png");
     Node::setContentSize(_wheel->getContentSize());
-        _body = Sprite::create("坦克/2.png");
-        _gun = [&]{
-        std::map<Tank::Type, std::string> map = {
-                {Tank::Type::ME, "坦克/3.png"},
-                {Tank::Type::AI, "坦克/3_1.png"},
-        };
-        return Sprite::create(map.at(type));
-    }();
+
+    switch (type) {
+        case ME:
+            _body = Sprite::create("坦克/2.png");
+            _gun = Sprite::create("坦克/3.png");
+            break;
+        case AI:
+            _body = Sprite::create("坦克/2_1.png");
+            _gun = Sprite::create("坦克/3_1.png");
+            break;
+    }
 
     {
         _firePoint = Node::create();
