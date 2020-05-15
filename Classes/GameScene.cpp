@@ -316,8 +316,9 @@ void GameScene::updateFood(float delta) {
 
     auto food = Food::create();
     food->initWithFile("道具/heart.png");
-    food->setPositionX(random(left + _wallWidth, right - _wallWidth));
-    food->setPositionY(random(top + _wallWidth, bottom - _wallWidth));
+    auto size = food->getContentSize();
+    food->setPositionX(random(left + _wallWidth + size.width, right - _wallWidth - size.height));
+    food->setPositionY(random(top - _wallWidth - size.width, bottom + _wallWidth + size.height));
     addChild(food);
     food->setEatCb([this, food](void* by) {
         food->removeFromParent();
