@@ -60,6 +60,8 @@ else()
     add_compile_options(-Wall)
 endif()
 
+include_directories(Classes/modules/MAKE_EVENT)
+
 # add cross-platforms source files and header files
 list(APPEND GAME_HEADER
         Classes/AppDelegate.h

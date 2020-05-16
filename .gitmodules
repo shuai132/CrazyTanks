@@ -1,3 +1,6 @@
 [submodule "cocos2d"]
 	path = cocos2d
 	url = https://gitee.com/shuai132/cocos2d.git
+[submodule "Classes/modules/MAKE_EVENT"]
+	path = Classes/modules/MAKE_EVENT
+	url = https://github.com/shuai132/MAKE_EVENT.git

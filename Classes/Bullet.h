@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cocos2d.h"
+#include "MakeEvent.hpp"
 
 class Bullet : public cocos2d::Node {
 public:
@@ -9,8 +10,6 @@ public:
         Rock1,
         Rock2,
     };
-
-    using BoomCb = std::function<void()>;
 
     float Speed = 200;
 
@@ -32,14 +31,12 @@ public:
 
     bool hasBoom();
 
-    void setBoomCb(BoomCb cb);
+    MAKE_EVENT(Boom);
 
     void boom();
 
 private:
     cocos2d::Sprite* _body;
-
-    BoomCb _boomCb;
 
     bool _hasBoom = false;
 };

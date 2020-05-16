@@ -21,7 +21,7 @@ void ActionBar::initTouchEvent() {
         if (_angle < 0) {
             _angle += 360.f;
         }
-        if (_angleCb) _angleCb(_angle);
+        onAngle(_angle);
 
         // 设置并限制位置
         auto distance = pos.distance(Vec2::ZERO);
@@ -37,7 +37,7 @@ void ActionBar::initTouchEvent() {
         auto pos = this->convertTouchToNodeSpaceAR(touch);
         auto size = getContentSize();
         if (Rect(-Vec2(size / 2), size).containsPoint(pos)) {
-            if (_touchEventCb) _touchEventCb(TouchEvent::START);
+            onTouch(TouchEvent::START);
             angleCb(touch, event);
             return true;
         }
@@ -45,7 +45,7 @@ void ActionBar::initTouchEvent() {
     };
     _el->onTouchMoved = angleCb;
     _el->onTouchEnded = [this](Touch* touches, Event* event) {
-        if (_touchEventCb) _touchEventCb(TouchEvent::END);
+        onTouch(TouchEvent::END);
         _tp->setPosition(Vec2::ZERO);
     };
     Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_el, this);
@@ -53,14 +53,6 @@ void ActionBar::initTouchEvent() {
 
 float ActionBar::getAngle() {
     return _angle;
-}
-
-void ActionBar::setAngleCb(ActionBar::AngleCb cb) {
-    _angleCb = std::move(cb);
-}
-
-void ActionBar::setTouchEventCb(ActionBar::TouchEventCb cb) {
-    _touchEventCb = std::move(cb);
 }
 
 ActionBar::~ActionBar() {

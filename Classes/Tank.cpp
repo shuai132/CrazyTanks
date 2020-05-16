@@ -87,7 +87,7 @@ void Tank::update(float delta) {
                 bullet->removeFromParent();
             });
             fire(bullet);
-            if (_fireCb) _fireCb(bullet);
+            onAiFire(bullet);
         }
     }
 }
@@ -117,36 +117,24 @@ void Tank::harm(Bullet* bullet) {
         mute();
     }
 
-    if (_dieCb && isDie()) {
-        _dieCb(bullet);
+    if (isDie()) {
+        onDie(bullet);
     }
 
-    if (_lifeCb) _lifeCb(_life);
-}
-
-void Tank::setDieCb(Tank::DieCb cb) {
-    _dieCb = std::move(cb);
+    onLife(_life);
 }
 
 bool Tank::isDie() {
     return _life <= 0;
 }
 
-void Tank::setAiFireCb(Tank::FireCb cb) {
-    _fireCb = std::move(cb);
-}
-
 float Tank::getLife() {
     return _life;
 }
 
-void Tank::setLifeCb(Tank::LifeCb cb) {
-    _lifeCb = std::move(cb);
-}
-
 float Tank::addLife(float life) {
     _life += life;
-    if (_lifeCb) _lifeCb(_life);
+    onLife(_life);
     return _life;
 }
 

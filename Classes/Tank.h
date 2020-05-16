@@ -4,6 +4,7 @@
 #include "AudioEngine.h"
 
 #include "Bullet.h"
+#include "MakeEvent.hpp"
 
 class Tank : public cocos2d::Node {
 public:
@@ -11,10 +12,6 @@ public:
         ME,
         AI,
     };
-
-    using DieCb = std::function<void(Bullet* lastBullet)>;
-    using FireCb = std::function<void(Bullet*)>;
-    using LifeCb = std::function<void(float life)>;
 
 public:
     float Speed = 200;
@@ -35,19 +32,18 @@ public:
 
     void harm(Bullet* bullet);
 
-    void setDieCb(DieCb cb);
-
     bool isDie();
-
-    void setAiFireCb(FireCb cb);
 
     float getLife();
 
     float addLife(float life);
 
-    void setLifeCb(LifeCb cb);
-
     void mute();
+
+public:
+    MAKE_EVENT(Die, Bullet* lastBullet);
+    MAKE_EVENT(AiFire, Bullet*);
+    MAKE_EVENT(Life, float lifeNow);
 
 private:
     Type type;
@@ -63,15 +59,10 @@ private:
     int _soundIdMove = NoSoundID;
 
     float _life = 10;
-    DieCb _dieCb;
 
     bool _mute;
 
     // AI
     uint64_t _lastTurnTime = 0;
     uint64_t _lastFireTime = 0;
-
-    FireCb _fireCb;
-
-    LifeCb _lifeCb;
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cocos2d.h"
+#include "MakeEvent.hpp"
 
 class ActionBar : public cocos2d::Node {
 public:
@@ -8,9 +9,6 @@ public:
         START,
         END,
     };
-
-    using AngleCb = std::function<void(float)>;
-    using TouchEventCb = std::function<void(TouchEvent)>;
 
 public:
     CREATE_FUNC(ActionBar);
@@ -21,9 +19,8 @@ public:
 
     float getAngle();
 
-    void setAngleCb(AngleCb cb);
-
-    void setTouchEventCb(TouchEventCb cb);
+    MAKE_EVENT(Angle, float);
+    MAKE_EVENT(Touch, TouchEvent);
 
 private:
     void initTouchEvent();
@@ -34,6 +31,4 @@ private:
     cocos2d::Sprite* _bg;    // background
     cocos2d::Sprite* _tp;    // touch point
     float _angle;
-    AngleCb _angleCb;
-    TouchEventCb _touchEventCb;
 };

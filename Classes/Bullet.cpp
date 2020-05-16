@@ -51,12 +51,8 @@ bool Bullet::hasBoom() {
     return _hasBoom;
 }
 
-void Bullet::setBoomCb(Bullet::BoomCb cb) {
-    _boomCb = std::move(cb);
-}
-
 void Bullet::boom() {
     if (_hasBoom) return;
     _hasBoom = true;
-    if (_boomCb) _boomCb();
+    onBoom();
 }

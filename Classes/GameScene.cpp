@@ -178,7 +178,7 @@ void GameScene::initActionBar() {
         _myTank->Angle = angle;
     });
 
-    _actionBar->setTouchEventCb([this](ActionBar::TouchEvent event) {
+    _actionBar->setTouchCb([this](ActionBar::TouchEvent event) {
         switch (event) {
             case ActionBar::TouchEvent::START:
             {
