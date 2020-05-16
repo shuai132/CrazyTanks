@@ -10,8 +10,15 @@
 class GameScene : public cocos2d::Scene
 {
 public:
+    CREATE_FUNC(GameScene);
+
     bool init() override;
 
+    void onEnter() override;
+
+    void onExitTransitionDidStart() override;
+
+public:
     void initMenu();
 
     void initBg();
@@ -26,15 +33,11 @@ public:
 
     void gameOver();
 
-    CREATE_FUNC(GameScene);
-
     void update(float delta) override;
 
     void updateAI(float delta);
 
     void updateFood(float delta);
-
-    ~GameScene() override;
 
 private:
     int _bgmStart = cocos2d::AudioEngine::INVALID_AUDIO_ID;

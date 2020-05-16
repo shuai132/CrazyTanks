@@ -29,11 +29,19 @@ bool GameScene::init()
 
     initLogic();
 
-    _bgmStart = AudioEngine::play2d("音效/start.mp3");
-
     scheduleUpdate();
 
     return true;
+}
+
+void GameScene::onEnter() {
+    Scene::onEnter();
+    _bgmStart = AudioEngine::play2d("音效/start.mp3");
+}
+
+void GameScene::onExitTransitionDidStart() {
+    Scene::onExitTransitionDidStart();
+    AudioEngine::stop(_bgmStart);
 }
 
 void GameScene::initMenu() {
@@ -326,8 +334,4 @@ void GameScene::updateFood(float delta) {
     });
     _foodNum++;
     _contact->addFood(food);
-}
-
-GameScene::~GameScene() {
-    AudioEngine::stop(_bgmStart);
 }
