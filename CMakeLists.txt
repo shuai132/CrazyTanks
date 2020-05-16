@@ -54,7 +54,11 @@ if(APPLE OR WINDOWS)
     cocos_mark_multi_resources(common_res_files RES_TO "Resources" FOLDERS ${GAME_RES_FOLDER})
 endif()
 
-add_compile_options(-Wall)
+if(MSVC)
+    add_compile_options(/W4)
+else()
+    add_compile_options(-Wall)
+endif()
 
 # add cross-platforms source files and header files
 list(APPEND GAME_HEADER
