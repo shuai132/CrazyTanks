@@ -1,5 +1,7 @@
 # CrazyTanks
 
+[![Build Status](https://github.com/shuai132/CrazyTanks/workflows/Ubuntu/badge.svg)](https://github.com/shuai132/CrazyTanks/actions?workflow=Ubuntu)
+
 ![icon](./proj.android/app/res/mipmap-xxxhdpi/ic_launcher.png)
 
 坦克小游戏  

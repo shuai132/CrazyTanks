@@ -1,0 +1,33 @@
+name: Ubuntu
+
+on:
+  push:
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+
+jobs:
+  Linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev libgtk-3-dev libglew-dev glew-utils
+          sudo apt-get install -y curl libcurl4-openssl-dev
+          sudo apt-get install -y sqlite3 libsqlite3-dev
+
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+
+      - name: Submodules
+        run: git submodule update --init --recursive
+
+      - name: CMake Build
+        run: |
+          mkdir build && cd build
+          cmake -DCMAKE_BUILD_TYPE=Debug ..
+          make -j2
