@@ -9,7 +9,7 @@ on:
       - '**.md'
 
 jobs:
-  Linux:
+  Ubuntu:
     runs-on: ubuntu-latest
     steps:
       - name: Install Dependencies
@@ -23,11 +23,23 @@ jobs:
         with:
           fetch-depth: 1
 
+      - name: Cache CMake Build
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-cmake-build
+        with:
+          path: build
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('.cocos2d.hash') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - name: Submodules
         run: git submodule update --init --recursive
 
       - name: CMake Build
         run: |
-          mkdir build && cd build
+          mkdir -p build && cd build
           cmake -DCMAKE_BUILD_TYPE=Debug ..
           make -j2
