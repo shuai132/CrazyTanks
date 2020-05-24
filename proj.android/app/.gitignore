@@ -2,3 +2,4 @@
 /.externalNativeBuild
 /release
 /debug
+/.cxx/
