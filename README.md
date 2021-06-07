@@ -19,8 +19,15 @@ git submodule update --init --recursive
 ## Build
 
 1. PC端  
+* macOS  
+nothing to do
+* Linux
+```shell
+./cocos2d/install-deps-linux.sh
+```
+
 使用CMake:
-```bash
+```shell
 mkdir build && cd build && cmake .. && make
 ```
 2. Android/iOS见各自工程
